@@ -8,7 +8,8 @@ import { createMessage } from "../../actions/messages";
 export class Register extends Component {
   static propTypes = {
     isAuthenticated: PropTypes.bool,
-    register: PropTypes.func.isRequired
+    register: PropTypes.func.isRequired,
+    error: PropTypes.object.isRequired
   };
   constructor(props) {
     super(props);
@@ -26,7 +27,9 @@ export class Register extends Component {
 
   onSubmit(e) {
     e.preventDefault();
-    const { username, email, password, password2 } = this.state;
+    const { username, email, password, password2, error } = this.state;
+
+    console.log("register[error]", error);
     if (!username) {
       this.props.createMessage({
         validateUsername: "Username should not be blank"
@@ -36,7 +39,8 @@ export class Register extends Component {
       this.props.createMessage({ validateEmail: "Email should not be blank" });
     }
     if (password !== password2) {
-      this.props.createMessage({ passwordNotMatch: "Passwords do not match" });
+      // this.props.createMessage({ passwordNotMatch: "Passwords do not match" });
+      alert("Passwords do not match");
     } else {
       const newUser = {
         username,
@@ -120,7 +124,8 @@ export class Register extends Component {
 }
 
 const mapStateToProps = state => ({
-  isAuthenticated: state.auth.isAuthenticated
+  isAuthenticated: state.auth.isAuthenticated,
+  error: state.errors
 });
 
 export default connect(

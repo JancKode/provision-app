@@ -20,6 +20,7 @@ export const loadUser = () => (dispatch, getState) => {
   axios
     .get("/register", tokenConfig(getState))
     .then(res => {
+      console.log("res", res);
       if (!res.config.data.username || !res.config.data.password) {
         dispatch(returnErrors(res.config.data, res.conifg.data));
         dispatch({
@@ -33,6 +34,7 @@ export const loadUser = () => (dispatch, getState) => {
       }
     })
     .catch(err => {
+      console.log(`err`, err);
       dispatch(returnErrors(err.response, err.response));
       dispatch({
         type: AUTH_ERROR
@@ -97,7 +99,7 @@ export const register = ({ username, password, email }) => dispatch => {
     .then(res => {
       if (
         res.data.result === "User already exists" ||
-        res.data.result === "Email already used, please register a new one"
+        res.data.result === "Email already exists, please register a new one"
       ) {
         dispatch(returnErrors(res.data.result, res.status));
         dispatch({
