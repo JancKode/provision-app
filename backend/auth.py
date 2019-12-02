@@ -6,6 +6,7 @@ from flask_login import login_user, login_required
 from .models import Users
 from datetime import datetime
 import logging
+import uuid
 
 auth = Blueprint('auth', __name__)
 
@@ -21,8 +22,11 @@ def register():
     if request.method == 'POST':
 
         username = request.get_json()['username']
+        first_name = request.get_json()['first_name']
+        last_name = request.get_json()['last_name']
         password = request.get_json()['password']
         email = request.get_json()['email']
+        unique_id = uuid.uuid4()
         created = datetime.utcnow()
 
         existing_email = Users.query.filter_by(email=email).first()
@@ -37,13 +41,15 @@ def register():
         else:
             access_token = create_access_token(identity={
                 'username': username,
+                'first_name': first_name,
+                'last_name': last_name,
                 'email': email
             })
-            new_user = Users(email=email, username=username,
-                             password=generate_password_hash(password, method='sha256'), create_date=created)
+            new_user = Users(first_name=first_name, last_name=last_name, email=email, username=username,
+                             password=generate_password_hash(password, method='sha256'), created_date=created, uuid=unique_id)
             db.session.add(new_user)
             db.session.commit()
-            return jsonify({'result': access_token})
+            return jsonify({'token': access_token, 'user': first_name + ' ' + last_name, 'uid': unique_id})
 
     return 'OK'
 
@@ -61,7 +67,7 @@ def login():
             'username': existing_user.username,
             'email': existing_user.email
         })
-        return jsonify({'token': access_token})
+        return jsonify({'token': access_token, 'user': existing_user.first_name + ' ' + existing_user.last_name})
     else:
         return jsonify({'result': 'Invalid username or password'})
 

@@ -18,7 +18,7 @@ export const loadUser = () => (dispatch, getState) => {
   dispatch({ type: USER_LOADING });
 
   axios
-    .get("/register", tokenConfig(getState))
+    .get("/login", tokenConfig(getState))
     .then(res => {
       console.log("res", res);
       if (!res.config.data.username || !res.config.data.password) {
@@ -29,7 +29,7 @@ export const loadUser = () => (dispatch, getState) => {
       } else {
         dispatch({
           type: USER_LOADED,
-          payload: res.data
+          payload: res.config.data
         });
       }
     })
@@ -74,6 +74,7 @@ export const login = (username, password) => dispatch => {
       }
     })
     .catch(err => {
+      // console.log(`error login`, err);
       dispatch(returnErrors(err.response.data, err.response.status));
       dispatch({
         type: LOGIN_FAIL
@@ -83,7 +84,13 @@ export const login = (username, password) => dispatch => {
 
 //Register User
 
-export const register = ({ username, password, email }) => dispatch => {
+export const register = ({
+  first_name,
+  last_name,
+  username,
+  password,
+  email
+}) => dispatch => {
   //Headers
   const config = {
     headers: {
@@ -92,7 +99,13 @@ export const register = ({ username, password, email }) => dispatch => {
   };
 
   //Request Body
-  const body = JSON.stringify({ username, password, email });
+  const body = JSON.stringify({
+    first_name,
+    last_name,
+    username,
+    password,
+    email
+  });
 
   axios
     .post("/register", body, config)
