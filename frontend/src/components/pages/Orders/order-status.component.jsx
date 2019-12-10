@@ -1,11 +1,14 @@
 import React, { Component, Fragment } from "react";
 import { createStructuredSelector } from "reselect";
+import uniqid from "uniqid";
 
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 
 import { selectCartItems } from "../../../reducers/cart/cart.selector";
 import authReducer from "../../../reducers/auth";
+
+import { authProperties } from "../../../reducers/auth.selector";
 
 import Dashboard from "../../dashboard/Dashboard";
 import FormInput from "../../form-input/form-input.component";
@@ -16,12 +19,38 @@ import ArrowBack from "@material-ui/icons/ArrowBackIosOutlined";
 import ConfirmDialog from "../../Dialog/confirm.dialog.component";
 
 const OrderStatusPageContainer = ({ auth, cartItems }) => {
-  const { isAuthenticated } = auth.auth;
-  console.log(auth);
+  const { isAuthenticated, order_data } = auth;
+  let cartItem = [];
+  let finalList = [];
+
+  if (cartItems) {
+    cartItem = cartItems.map(item => {
+      return {
+        address: item.address,
+        approval_status: false,
+        approved_by: "Admin",
+        cat_sta: false,
+        email: item.email,
+        first_name: item.first_name,
+        last_name: item.last_name,
+        logo: item.catalogueData.logo,
+        order_date: "2019-12-06T12:23:34.918961",
+        price: item.catalogueData.price,
+        service: item.catalogueData.title,
+        status: false,
+        subscriber: item.first_name,
+        url: null,
+        version: item.catalogueData.version
+      };
+    });
+    finalList = [...order_data, ...cartItem];
+  }
+
+  console.log(`finalList`, finalList);
   return (
     <Dashboard>
       {isAuthenticated ? (
-        <OrderStatusComponent cartItems={cartItems} />
+        <OrderStatusComponent cartItems={finalList} order_data={order_data} />
       ) : (
         <Redirect to="/login" />
       )}
@@ -37,31 +66,40 @@ export const OrderStatusInfoPageContainer = ({ auth, ...otherProps }) => {
   );
 };
 
-export const OrderStatusComponent = ({ cartItems }) => {
-  const orderList = cartItems; //[JSON.parse(localStorage.getItem("catalogueFormData"))];
+export const OrderStatusComponent = ({ cartItems, order_data }) => {
+  console.log(`cartItems[order_data]`, cartItems);
+  const orderList = cartItems.length ? cartItems : order_data; //[JSON.parse(localStorage.getItem("catalogueFormData"))];
   let orderItems = "";
-  console.log(orderList);
+  let currentDate = new Date()
+    .toJSON()
+    .slice(0, 10)
+    .replace(/-/g, "/");
+  console.log(`orderList`, orderList);
   if (orderList) {
     orderItems = orderList.map(item => (
-      <tr key={item.catalogueData.uid}>
+      <tr key={uniqid()}>
         <td className="td-select-all">
           <input type="checkbox" />
         </td>
         <td className="td-logo-ico">
           <img
-            src={require(`../../../assets/images/logo-${item.catalogueData.id}.png`)}
+            src={require(`../../../assets/images/logo-${item.logo}.png`)}
             alt="logo"
           />
         </td>
-        <td className="td-service">{`${item.catalogueData.title} ${item.catalogueData.version}`}</td>
+        <td className="td-service">{`${item.service} ${item.version}`}</td>
         <td className="td-subscriber">
-          <Link to="/order-status-info">{item.name}</Link>
+          <Link to="/order-status-info">{`${item.first_name} ${item.last_name}`}</Link>
         </td>
         <td className="td-approval-status">
-          <span className="span-status">Pending</span>
+          <span className="span-status">{"Pending"}</span>
         </td>
         <td className="td-url">http://192.168.1.1/</td>
-        <td className="td-date">19 Oct 02</td>
+        <td className="td-date">
+          {item.order_date
+            ? item.order_date.slice(0, 10).replace(/-/g, "/")
+            : currentDate}
+        </td>
         <td className="td-status">
           <span className="span-status">Not Active</span>
         </td>
@@ -100,73 +138,7 @@ export const OrderStatusComponent = ({ cartItems }) => {
               <th className="th-approve"></th>
             </tr>
           </thead>
-          <tbody>
-            {orderItems}
-            {/* <tr>
-              <td className="td-select-all">
-                <input type="checkbox" />
-              </td>
-              <td className="td-logo-ico">
-                <img
-                  src={require("../../../assets/images/logo-aws.png")}
-                  alt="logo"
-                />
-              </td>
-              <td className="td-service">Amazon Web Services 3.8.0</td>
-              <td className="td-subscriber">
-                <Link to="/order-status-info">Smith, John</Link>
-              </td>
-              <td className="td-approval-status">
-                <span className="span-status">Pending</span>
-              </td>
-              <td className="td-url">http://192.168.1.1/</td>
-              <td className="td-date">19 Oct 02</td>
-              <td className="td-status">
-                <span className="span-status">Not Active</span>
-              </td>
-              <td className="td-approved-by">Beatrix, A.</td>
-              <td className="td-delete">
-                <i className="ti ti-close"></i>
-              </td>
-              <td className="td-approve">
-                <button className="btn btn-outline btn-outline-green">
-                  Approve
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td className="td-select-all">
-                <input type="checkbox" />
-              </td>
-              <td className="td-logo-ico">
-                <img
-                  src={require("../../../assets/images/logo-aws.png")}
-                  alt="logo"
-                />
-              </td>
-              <td className="td-service">Amazon Web Services 3.8.0</td>
-              <td className="td-subscriber">
-                <a href="/login">Smith, John</a>
-              </td>
-              <td className="td-approval-status">
-                <span className="span-status">Pending</span>
-              </td>
-              <td className="td-url">http://192.168.1.1/</td>
-              <td className="td-date">19 Oct 02</td>
-              <td className="td-status">
-                <span className="span-status">Not Active</span>
-              </td>
-              <td className="td-approved-by">Beatrix, A.</td>
-              <td className="td-delete">
-                <i className="ti ti-close"></i>
-              </td>
-              <td className="td-approve">
-                <button className="btn btn-outline btn-outline-green">
-                  Approve
-                </button>
-              </td>
-            </tr> */}
-          </tbody>
+          <tbody>{orderItems}</tbody>
         </table>
       </div>
     </div>
@@ -176,17 +148,19 @@ export const OrderStatusComponent = ({ cartItems }) => {
 export class OrderStatusInfoComponent extends Component {
   constructor(props) {
     super(props);
-    const { auth } = this.props.data.auth;
+    console.log(`this.props`, this.props);
+    const { auth } = this.props.data;
     const { catalogue } = this.props.data.otherProps.location;
 
-    console.log(`this.props`, this.props);
+    console.log(`this.props.data`, this.props.data);
+    console.log(`this.auth`, auth.first_name);
     this.state = {
       auth: auth,
-      name: auth ? auth.user : "",
-      email: auth && auth.email ? auth.email : "jjsmith@email.com",
-      mobile: this.props.data && auth.mobile ? auth.mobile : "+61 123 456 7890",
-      phoneExt:
-        this.props.data && auth.phonext ? auth.phonext : "+61 987 654 3210",
+      first_name: auth ? auth.first_name : "",
+      last_name: auth ? auth.last_name : "",
+      email: auth && auth.email ? auth.email : "samplemail@email.com",
+      mobile: auth && auth.mobile ? auth.mobile : "+61 123 456 7890",
+      secondaryMobile: auth && auth.phonext ? auth.phonext : "+61 987 654 3210",
       address: "",
       catalogueData: catalogue,
 
@@ -214,12 +188,14 @@ export class OrderStatusInfoComponent extends Component {
     const { data } = this.props;
     const {
       auth,
-      name,
+      first_name,
+      last_name,
       email,
       mobile,
-      phoneExt,
+      secondaryMobile,
       addNewCatalogue,
-      catalogueData
+      catalogueData,
+      address
     } = this.state;
 
     console.log(`addNewCatalogue `, addNewCatalogue);
@@ -311,15 +287,27 @@ export class OrderStatusInfoComponent extends Component {
                       <Fragment>
                         {addNewCatalogue ? (
                           <FormInput
-                            name="name"
+                            name="first_name"
                             type="text"
-                            label="Name"
-                            value={name}
+                            label="First Name"
+                            value={first_name}
                             required
                             handleChange={this.handleChange}
                           />
                         ) : (
-                          <strong>John Jacob Smith</strong>
+                          <strong>{first_name}</strong>
+                        )}
+                        {addNewCatalogue ? (
+                          <FormInput
+                            name="last_name"
+                            type="text"
+                            label="Last Name"
+                            value={last_name}
+                            required
+                            handleChange={this.handleChange}
+                          />
+                        ) : (
+                          <strong>{last_name}</strong>
                         )}
                       </Fragment>
                     </div>
@@ -335,7 +323,7 @@ export class OrderStatusInfoComponent extends Component {
                             handleChange={this.handleChange}
                           />
                         ) : (
-                          <p>jjsmith@email.com</p>
+                          <p>{email}</p>
                         )}
 
                         {addNewCatalogue ? (
@@ -348,20 +336,20 @@ export class OrderStatusInfoComponent extends Component {
                             handleChange={this.handleChange}
                           />
                         ) : (
-                          <p>+61 123 456 7890</p>
+                          <p>{mobile}</p>
                         )}
 
                         {addNewCatalogue ? (
                           <FormInput
-                            name="phoneExt"
+                            name="secondary_mobile"
                             type="text"
                             label="Additional Phone number"
-                            value={phoneExt}
+                            value={secondaryMobile}
                             required
                             handleChange={this.handleChange}
                           />
                         ) : (
-                          <p>+61 987 654 3210</p>
+                          <p>{secondaryMobile}</p>
                         )}
                       </Fragment>
                       {/* <p>jjsmith@email.com</p>
@@ -378,13 +366,7 @@ export class OrderStatusInfoComponent extends Component {
                           onChange={this.handleChange}
                         />
                       ) : (
-                        <p>
-                          Room 2310, Emerson Bldg.
-                          <br />
-                          Willow Creek, NSW 2205
-                          <br />
-                          Australia
-                        </p>
+                        <p>{address}</p>
                       )}
 
                       {/* <p>
@@ -423,7 +405,7 @@ export class OrderStatusInfoComponent extends Component {
 }
 
 const mapStateToProps = createStructuredSelector({
-  auth: authReducer,
+  auth: authProperties,
   cartItems: selectCartItems
 });
 

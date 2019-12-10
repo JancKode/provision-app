@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import { connect } from "react-redux";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -9,6 +10,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import handleClick from "../../helper/helper";
 
 import { addItem } from "../../reducers/cart/cart.actions";
+import { addDataToDb } from "../../reducers/cart/cart.utils";
 
 const AlertDialog = ({ addItem, data, addOrder }) => {
   const [open, setOpen] = React.useState(false);
@@ -19,6 +21,8 @@ const AlertDialog = ({ addItem, data, addOrder }) => {
 
   const clickAddItemHandler = () => {
     addItem(data);
+    let status = addDataToDb(data);
+    console.log(`data to insert`, status.getData);
   };
 
   const handleClose = () => {

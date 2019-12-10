@@ -1,9 +1,12 @@
 import React, { Component } from "react";
+import { createStructuredSelector } from "reselect";
+
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
 import { logout } from "../../actions/auth";
+import { authProperties } from "../../reducers/auth.selector";
 
 // import MenuIcon from "@material-ui/icons/Menu";
 
@@ -19,8 +22,8 @@ export class Header extends Component {
     return <Redirect to="/login" />;
   }
   render() {
-    const { isAuthenticated, user } = this.props.auth;
-    console.log(`auth properties`, this.props.auth);
+    const { isAuthenticated, first_name, last_name } = this.props.auth;
+    console.log(`auth properties`, this.props.auth.first_name);
 
     const authLinks = (
       // <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
@@ -85,7 +88,7 @@ export class Header extends Component {
           <div className="profile-area">
             <div className="profile-info">
               <p style={{ marginTop: ".6rem" }}>
-                <span className="profile-name">{user}</span>
+                <span className="profile-name">{`${first_name} ${last_name}`}</span>
                 {isAuthenticated ? (
                   <span className="profile-status">{"Admin"}</span>
                 ) : (
@@ -125,8 +128,8 @@ export class Header extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  auth: state.auth
+const mapStateToProps = createStructuredSelector({
+  auth: authProperties
 });
 
 export default connect(mapStateToProps, { logout })(Header);

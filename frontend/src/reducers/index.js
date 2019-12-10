@@ -15,12 +15,21 @@ const persistConfig = {
   whitelist: ["auth", "cart"]
 };
 
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
   auth: authReducer,
   errors,
   messages,
   catalogue: catalogueReducer,
   cart: cartReducer
 });
+
+const rootReducer = (state, action) => {
+  if (action.type === "LOGOUT_SUCCESS") {
+    storage.removeItem("persist:root");
+    state = undefined;
+  }
+
+  return appReducer(state, action);
+};
 
 export default persistReducer(persistConfig, rootReducer);

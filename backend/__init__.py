@@ -4,9 +4,11 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_marshmallow import Marshmallow
 
 
 db = SQLAlchemy()
+mallow = Marshmallow()
 
 jwt = JWTManager()
 
@@ -18,6 +20,8 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config['SECRET_KEY'] = 'thisisthesecretkey'
     db.init_app(app)
+    mallow.init_app(app)
+
     jwt.init_app(app)
 
     login_manager = LoginManager()
@@ -37,7 +41,7 @@ def create_app():
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
 
-    # from .order import orders as order_blueprint
-    # app.register_blueprint(order_blueprint)
+    from .orders import order as order_blueprint
+    app.register_blueprint(order_blueprint)
 
     return app

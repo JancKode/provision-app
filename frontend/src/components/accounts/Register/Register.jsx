@@ -149,7 +149,17 @@ export class Register extends Component {
               src={require("../../../assets/images/logo2x.png")}
             />
           </div> */}
+
           <form onSubmit={this.onSubmit}>
+            <input
+              type="text"
+              className="form-control"
+              name="username"
+              onChange={this.onChange}
+              value={username}
+              required
+              placeholder="Username"
+            />
             <input
               type="text"
               className="form-control"
@@ -168,15 +178,7 @@ export class Register extends Component {
               required
               placeholder="Last Name"
             />
-            <input
-              type="text"
-              className="form-control"
-              name="username"
-              onChange={this.onChange}
-              value={username}
-              required
-              placeholder="Username"
-            />
+
             <input
               type="email"
               className="form-control"

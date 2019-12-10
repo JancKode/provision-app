@@ -20,7 +20,6 @@ const cartReducer = (state = INITIAL_STATE, action) => {
     //     cartItems: removeItemFromCart(state.cartItems, action.payload)
     //   };
     default:
-      console.log(`'jerjer`);
       return state;
   }
 };
