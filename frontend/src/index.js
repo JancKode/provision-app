@@ -4,19 +4,30 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import * as serviceWorker from "./serviceWorker";
 
+import { Provider as AlertProvider } from "react-alert";
+import AlertTemplate from "react-alert-template-basic";
+
 import { Provider } from "react-redux";
 
 import { PersistGate } from "redux-persist/integration/react";
 
 import { store, persistor } from "./store";
 
+//Alert Options
+const alertOptions = {
+  timeout: 3000,
+  position: "top center"
+};
+
 ReactDOM.render(
   <Provider store={store}>
-    <BrowserRouter>
-      <PersistGate persistor={persistor}>
-        <App />
-      </PersistGate>
-    </BrowserRouter>
+    <AlertProvider template={AlertTemplate} {...alertOptions}>
+      <BrowserRouter>
+        <PersistGate persistor={persistor}>
+          <App />
+        </PersistGate>
+      </BrowserRouter>
+    </AlertProvider>
   </Provider>,
   document.getElementById("root")
 );

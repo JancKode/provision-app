@@ -26,10 +26,10 @@ class App extends Component {
           <PrivateRoute exact path="/" component={Login} />
           <Route exact path="/register" component={Register} />
           <Route exact path="/login" component={Login} />
-          <Route path="/service-catalogue" component={ServicesPage} />
-          <Route path="/order-status" component={OrderStatusPage} />
-          <Route path="/order-catalogue-form" component={OrderStatusInfoPage} />
-          <Route path="/order-status-info" component={OrderStatusInfoPage} />
+          <Route exact path="/service-catalogue" component={ServicesPage} />
+          <Route exact path="/order-status" component={OrderStatusPage} />
+          <Route exact path="/order-catalogue-form" component={OrderStatusInfoPage} />
+          <Route exact path="/order-status-info" component={OrderStatusInfoPage} />
         </Switch>
       </Fragment>
     );

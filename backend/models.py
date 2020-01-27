@@ -22,6 +22,7 @@ class Users(UserMixin, db.Model):
 
 class Orders(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.String, nullable=False, unique=True)
     user_id = db.Column(db.String, nullable=False)
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
@@ -31,13 +32,16 @@ class Orders(UserMixin, db.Model):
     approval_status = db.Column(db.Boolean(), default=False)
     url = db.Column(db.String(50))
     order_date = db.Column(db.DateTime())
-    status = db.Column(db.Boolean(), default=False)
+    status = db.Column(db.String(20), default='Not Active')
     approved_by = db.Column(db.String(80), nullable=False)
     cat_sta = db.Column(db.Boolean(), default=False)
     address = db.Column(db.String(500))
     price = db.Column(db.String(20))
     version = db.Column(db.String(15))
     logo = db.Column(db.String(15))
+    mobile = db.Column(db.String(40))
+    secondary_mobile = db.Column(db.String(40))
+    
 
 
 class OrderSchema(mallow.ModelSchema):

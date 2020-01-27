@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
+import { compose} from 'redux';
+import { withAlert} from 'react-alert'
 import PropTypes from "prop-types";
 import { login } from "../../../actions/auth";
 
@@ -27,8 +29,10 @@ export class Login extends Component {
   com;
 
   onSubmit(e) {
+    const {username, password} = this.state
     e.preventDefault();
-    this.props.login(this.state.username, this.state.password);
+    this.props.login(username, password);
+    
   }
 
   onChange(e) {
@@ -147,4 +151,7 @@ const mapStateToProps = state => ({
   error: state.errors
 });
 
-export default connect(mapStateToProps, { login })(Login);
+export default compose(
+  withAlert(),
+  connect(mapStateToProps, { login })
+  )(Login);

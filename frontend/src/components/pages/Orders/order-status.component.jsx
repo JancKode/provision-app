@@ -1,29 +1,34 @@
-import React, { Component, Fragment } from "react";
+import React, { Component, Fragment, useEffect } from "react";
 import { createStructuredSelector } from "reselect";
+
 import uniqid from "uniqid";
 
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
+import { withAlert } from "react-alert";
+import { compose } from "redux";
 
+import { getData } from "../../../reducers/cart/cart.utils";
 import { selectCartItems } from "../../../reducers/cart/cart.selector";
 import authReducer from "../../../reducers/auth";
-
 import { authProperties } from "../../../reducers/auth.selector";
 
 import Dashboard from "../../dashboard/Dashboard";
 import FormInput from "../../form-input/form-input.component";
+import ConfirmDialog from "../../Dialog/confirm.dialog.component";
 
 import Bag from "@material-ui/icons/LocalMallOutlined";
 import ArrowBack from "@material-ui/icons/ArrowBackIosOutlined";
 
-import ConfirmDialog from "../../Dialog/confirm.dialog.component";
-
-const OrderStatusPageContainer = ({ auth, cartItems }) => {
+const OrderStatusPageContainer = ({ auth, cartItems, alert }) => {
   const { isAuthenticated, order_data } = auth;
   let cartItem = [];
   let finalList = [];
-
-  if (cartItems) {
+  useEffect(() => {
+    
+  })
+  console.log(`cartcartItems`, cartItems);
+  if (cartItems && cartItems.length > 0) {
     cartItem = cartItems.map(item => {
       return {
         address: item.address,
@@ -33,14 +38,15 @@ const OrderStatusPageContainer = ({ auth, cartItems }) => {
         email: item.email,
         first_name: item.first_name,
         last_name: item.last_name,
-        logo: item.catalogueData.logo,
+        logo: item.logo,
         order_date: "2019-12-06T12:23:34.918961",
-        price: item.catalogueData.price,
-        service: item.catalogueData.title,
-        status: false,
+        price: item.price,
+        service: item.service,
+        status: 'Not Active',
         subscriber: item.first_name,
         url: null,
-        version: item.catalogueData.version
+        version: item.version,
+        item_id: item.item_id
       };
     });
     finalList = [...order_data, ...cartItem];
@@ -50,7 +56,11 @@ const OrderStatusPageContainer = ({ auth, cartItems }) => {
   return (
     <Dashboard>
       {isAuthenticated ? (
-        <OrderStatusComponent cartItems={finalList} order_data={order_data} />
+        <OrderStatusComponent
+          cartItems={finalList}
+          order_data={order_data}
+          alert={alert}
+        />
       ) : (
         <Redirect to="/login" />
       )}
@@ -58,10 +68,11 @@ const OrderStatusPageContainer = ({ auth, cartItems }) => {
   );
 };
 
-export const OrderStatusInfoPageContainer = ({ auth, ...otherProps }) => {
+export const OrderStatusInfoPageContainer = ({ auth, match, ...otherProps }) => {
+  console.log(`OrderStatusInfoPageContainer`, match)
   return (
     <Dashboard>
-      <OrderStatusInfoComponent data={{ auth, otherProps }} />
+      <OrderStatusInfoComponent data={{ auth, otherProps, match }} />
     </Dashboard>
   );
 };
@@ -69,6 +80,16 @@ export const OrderStatusInfoPageContainer = ({ auth, ...otherProps }) => {
 export const OrderStatusComponent = ({ cartItems, order_data }) => {
   console.log(`cartItems[order_data]`, cartItems);
   const orderList = cartItems.length ? cartItems : order_data; //[JSON.parse(localStorage.getItem("catalogueFormData"))];
+  const approvalStatusClass = (approvalStatusCode) => {
+    console.log(`approvalStatusCode`, approvalStatusCode)
+    if(approvalStatusCode === 'Cancelled' || !approvalStatusCode) {
+      return 'status-orange'
+    }else if (approvalStatusCode === 'Active' || approvalStatusCode === true){
+      return 'status-green'
+    } else {
+      return ''
+    }
+  }
   let orderItems = "";
   let currentDate = new Date()
     .toJSON()
@@ -87,12 +108,19 @@ export const OrderStatusComponent = ({ cartItems, order_data }) => {
             alt="logo"
           />
         </td>
-        <td className="td-service">{`${item.service} ${item.version}`}</td>
+        <td className="td-service">{`${(item.service)} ${item.version}`}</td>
         <td className="td-subscriber">
-          <Link to="/order-status-info">{`${item.first_name} ${item.last_name}`}</Link>
+          <Link
+            to={{
+              pathname: "/order-status-info",
+              item_id: item.item_id
+            }}
+          >
+            {`${item.first_name} ${item.last_name}`}
+          </Link>
         </td>
         <td className="td-approval-status">
-          <span className="span-status">{"Pending"}</span>
+          <span className={`span-status ${approvalStatusClass(item.approval_status)}`}>{!item.approval_status ? 'Pending' : 'Approved'}</span>
         </td>
         <td className="td-url">http://192.168.1.1/</td>
         <td className="td-date">
@@ -101,7 +129,7 @@ export const OrderStatusComponent = ({ cartItems, order_data }) => {
             : currentDate}
         </td>
         <td className="td-status">
-          <span className="span-status">Not Active</span>
+  <span className={`span-status ${approvalStatusClass(item.status)}`}>{item.status}</span>
         </td>
         <td className="td-approved-by">Beatrix, A.</td>
         <td className="td-delete">
@@ -148,7 +176,7 @@ export const OrderStatusComponent = ({ cartItems, order_data }) => {
 export class OrderStatusInfoComponent extends Component {
   constructor(props) {
     super(props);
-    console.log(`this.props`, this.props);
+    
     const { auth } = this.props.data;
     const { catalogue } = this.props.data.otherProps.location;
 
@@ -163,7 +191,10 @@ export class OrderStatusInfoComponent extends Component {
       secondaryMobile: auth && auth.phonext ? auth.phonext : "+61 987 654 3210",
       address: "",
       catalogueData: catalogue,
-
+      orderDetail: "",
+      service: "",
+      logo: "aws",
+      status: 'Not Active',
       addNewCatalogue:
         this.props.data && this.props.data.otherProps
           ? this.props.data.otherProps.location.addCatalogue
@@ -171,6 +202,41 @@ export class OrderStatusInfoComponent extends Component {
     };
 
     this.handleChange = this.handleChange.bind(this);
+  }
+  //Load item data when component mounts
+  async componentDidMount() {
+    const { item_id } = this.props.data.otherProps.location;
+    const { error, success } = this.props.data.otherProps.alert;
+    const { addNewCatalogue } = this.state;
+
+    
+    console.log(`addNewCatalogue`, addNewCatalogue);
+    if (addNewCatalogue === undefined) {
+      try {
+        let itemData = await getData(item_id);
+        console.log(`itemData`, itemData);
+        this.setState({
+          orderDetail: itemData,
+          first_name: itemData.first_name,
+          last_name: itemData.last_name,
+          email: itemData.email,
+          mobile: itemData.mobile,
+          secondaryMobile: itemData.secondary_mobile,
+          address: itemData.address,
+          service: itemData.service,
+          orderDate: itemData.order_date,
+          approvalStatus: itemData.approval_status,
+          logo: itemData.logo || "aws",
+          price: itemData.price,
+          version: itemData.version,
+          itemId: itemData.item_id,
+          status: itemData.status
+        });
+      } catch (e) {
+        
+        error(e);
+      }
+    }
   }
 
   handleChange(e) {
@@ -185,7 +251,7 @@ export class OrderStatusInfoComponent extends Component {
   };
 
   render() {
-    const { data } = this.props;
+    const { data  } = this.props;
     const {
       auth,
       first_name,
@@ -195,10 +261,19 @@ export class OrderStatusInfoComponent extends Component {
       secondaryMobile,
       addNewCatalogue,
       catalogueData,
-      address
+      address,
+      orderDate,
+      service,
+      logo,
+      price,
+      version,
+      status,
+      itemId, 
+      approvalStatus
     } = this.state;
 
-    console.log(`addNewCatalogue `, addNewCatalogue);
+    console.log(`match `, this.props);
+    console.log(`secondaryMobile`, secondaryMobile);
 
     const userData = data && data.auth;
 
@@ -228,17 +303,34 @@ export class OrderStatusInfoComponent extends Component {
                 handleClick={addNewCatalogue ? "catalogueFormData" : "Approve"}
                 data={this.state}
                 addOrder={addNewCatalogue ? true : false}
+                alert={alert}
+                message={'Add this order?'}
+                match = {data.match}
+                buttonClass='btn-green'
+                type= {addNewCatalogue ? 'add' : 'activate'}
+                itemId={itemId}
+                
               />
+              <ConfirmDialog
+                className="btn btn-orange"
+                handleClick={addNewCatalogue ? "catalogueFormData" : "Approve"}
+                data={this.state}
+                addOrder={addNewCatalogue ? true : false}
+                alert={alert}
+                message={'Cancel this order?'}
+                match = {data.match}
+                type='cancel'
+                buttonClass='btn-outline-orange'
+                itemId={itemId} />
 
-              <Link
+              {/* <Link
                 to={addNewCatalogue ? "/service-catalogue" : "/order-status"}
               >
-                <button className="btn btn-outline-orange">Cancel</button>
-              </Link>
+                <button className="btn btn-outline-orange" onClick={this.handleClick}>Cancel</button>
+              </Link> */}
+              
               <div
-                className={`cat cat-${
-                  catalogueData ? catalogueData.id : "aws"
-                }`}
+                className={`cat cat-${catalogueData ? catalogueData.id : logo}`}
               >
                 <div className="cat-border"></div>
                 <div className="ico-cart">
@@ -248,26 +340,22 @@ export class OrderStatusInfoComponent extends Component {
                   alt="logo"
                   className="cat-logo"
                   src={require(`../../../assets/images/logo-${
-                    catalogueData ? catalogueData.id : "aws"
+                    catalogueData ? catalogueData.id : logo
                   }.png`)}
                 />
                 <div className="cat-info-left">
                   <span>
                     <strong>
-                      {catalogueData
-                        ? catalogueData.title
-                        : "Amazon Web Services"}
+                      {catalogueData ? catalogueData.title : service}
                     </strong>
                   </span>
                   <br />
-                  <span>
-                    {catalogueData ? catalogueData.version : "V1.0.0.1"}
-                  </span>
+                  <span>{catalogueData ? catalogueData.version : version}</span>
                 </div>
                 <div className="cat-info-right">
                   <span>
                     <strong>
-                      {catalogueData ? catalogueData.price : "$0.99/mo"}.
+                      {catalogueData ? catalogueData.price : price}.
                     </strong>
                   </span>
                   <br />
@@ -278,7 +366,7 @@ export class OrderStatusInfoComponent extends Component {
               <div className="info">
                 <div className="info-group">
                   <p className="label">Service Information</p>
-                  <h3>AWS</h3>
+                  <h3>{service}</h3>
                 </div>
                 <div className="info-group">
                   <p className="label">Service Information</p>
@@ -307,7 +395,7 @@ export class OrderStatusInfoComponent extends Component {
                             handleChange={this.handleChange}
                           />
                         ) : (
-                          <strong>{last_name}</strong>
+                          <strong> { last_name}</strong>
                         )}
                       </Fragment>
                     </div>
@@ -341,7 +429,7 @@ export class OrderStatusInfoComponent extends Component {
 
                         {addNewCatalogue ? (
                           <FormInput
-                            name="secondary_mobile"
+                            name="secondaryMobile"
                             type="text"
                             label="Additional Phone number"
                             value={secondaryMobile}
@@ -381,7 +469,7 @@ export class OrderStatusInfoComponent extends Component {
                 </div>
                 <div className="info-group">
                   <p className="label">Approval Status</p>
-                  <span className="span-status">Pending</span>
+                    <span className="span-status">{approvalStatus}</span>
                 </div>
                 <div className="info-group">
                   <p className="label">URL</p>
@@ -389,11 +477,11 @@ export class OrderStatusInfoComponent extends Component {
                 </div>
                 <div className="info-group">
                   <p className="label">Order Date</p>
-                  <h3>2019 October 23, 15:06:59</h3>
+                  <h3>{orderDate}</h3>
                 </div>
                 <div className="info-group">
                   <p className="label">Approval Status</p>
-                  <span className="span-status">Pending</span>
+                  <span className="span-status">{status}</span>
                 </div>
               </div>
             </div>
@@ -409,7 +497,7 @@ const mapStateToProps = createStructuredSelector({
   cartItems: selectCartItems
 });
 
-const connectContainer = connect(mapStateToProps);
+const connectContainer = compose(withAlert(), connect(mapStateToProps));
 export const OrderStatusPage = connectContainer(OrderStatusPageContainer);
 export const OrderStatusInfoPage = connectContainer(
   OrderStatusInfoPageContainer

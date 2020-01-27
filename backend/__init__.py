@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
@@ -15,8 +16,10 @@ jwt = JWTManager()
 
 def create_app():
     app = Flask(__name__)
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:flaskdb0321@localhost:5433/Users'
+    
+    db_name = os.environ['DB_ACCESS']
+    db_password = os.environ['DB_PASSWORD']
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://'+db_name+':'+db_password+'@localhost:5432/Users'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config['SECRET_KEY'] = 'thisisthesecretkey'
     db.init_app(app)

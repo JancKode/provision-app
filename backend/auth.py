@@ -51,7 +51,7 @@ def register():
                              password=generate_password_hash(password, method='sha256'), created_date=created, uuid=unique_id)
             db.session.add(new_user)
             db.session.commit()
-            return jsonify({'token': access_token, 'first_name': first_name, 'last_name': last_name, 'uid': unique_id, 'order_data': []})
+            return jsonify({'token': access_token, 'first_name': first_name, 'last_name': last_name, 'uid': unique_id, 'order_data': [], 'email': email})
 
     return 'OK'
 

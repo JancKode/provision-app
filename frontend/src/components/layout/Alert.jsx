@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { withAlert} from 'react-alert';
+import { compose } from "redux";
 
 export class Alert extends Component {
   static propTypes = {
@@ -9,18 +11,6 @@ export class Alert extends Component {
 
   componentDidUpdate(prevProps) {
     const { error, message } = this.props;
-    console.log(`error`, error);
-    console.log("prevProps", prevProps);
-    // if (
-    //   error.msg &&
-    //   (error.msg === "User already exists" ||
-    //     error.msg === "Invalid username or password" ||
-    //     error.msg === "No user found" ||
-    //     error.msg === "Email already exists, please register a new one")
-    // ) {
-    //   alert(error.msg);
-    //   return false;
-    // }
 
     if (message !== prevProps.error.msg) {
       if (
@@ -29,10 +19,14 @@ export class Alert extends Component {
         error.msg === "No user found" ||
         error.msg === "Email already exists, please register a new one"
       ) {
-        alert(error.msg);
+        this.props.alert.error(error.msg);
       } else if (message.passwordNotMatch) {
-        alert(message.passwordNotMatch);
-      }
+        this.props.alert.error(message.passwordNotMatch);
+      } 
+    } else {
+      setTimeout(() => {
+        this.props.alert.success(`Welcome back!`)
+      }, 600)
     }
   }
 
@@ -46,4 +40,7 @@ const mapStateToProps = state => ({
   message: state.messages
 });
 
-export default connect(mapStateToProps)(Alert);
+export default compose(
+  withAlert(),
+  connect(mapStateToProps)
+)(Alert);
