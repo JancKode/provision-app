@@ -1,6 +1,41 @@
 import axios from "axios";
 import uniqid from "uniqid";
 
+import CartActionTypes from "./cart.type";
+import returnErrors from "../messages";
+
+export const orderData = userId => dispatch => {
+  let res;
+  const config = {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  };
+
+  const body = JSON.stringify({
+    userId: userId,
+    updateSta: "getAllOrderData",
+  });
+  try {
+    res = axios.post("/order-status", body, config).then(res => {
+      console.log(`post result`, res.data);
+      dispatch({
+        type: CartActionTypes.GET_ALL_ORDER,
+        payload: res.data
+      });
+      // return res.data
+    });
+    console.log(`userId inside order_data`, res.data);
+  } catch (error) {
+    dispatch(returnErrors(error.response.data, error.response.status));
+    dispatch({
+      type: CartActionTypes.CART_ERROR
+    });
+    console.log(`error in getting order Data`, error);
+    return error;
+  }
+};
+
 export const getData = async data => {
   const config = {
     headers: {
@@ -10,8 +45,7 @@ export const getData = async data => {
   console.log(`data[itemId], ${data}`);
   const body = JSON.stringify({
     itemId: data,
-    updateSta: 'getData'
-    
+    updateSta: "getData"
   });
   let res;
   try {
@@ -32,48 +66,65 @@ export const cancelOrder = async itemId => {
   console.log(`data[itemId], ${itemId}`);
   const body = JSON.stringify({
     itemId: itemId,
-    updateSta: 'cancelOrder',
-    status: 'Cancelled'
-
+    updateSta: "cancelOrder",
+    status: "Cancelled"
   });
   let res;
 
   try {
     res = await axios.post("/order-status-info", body, config);
-    return res.data
+    return res.data;
   } catch (error) {
-    console.log(`Encountered error while cancelling order`, error)
-    return error
+    console.log(`Encountered error while cancelling order`, error);
+    return error;
+  }
+};
+
+export const approveOrder = async (itemId, userId) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  };
+  console.log(`data[itemId], ${itemId}`);
+  const body = JSON.stringify({
+    itemId: itemId,
+    updateSta: "approveOrder",
+    approvalStatus: true,
+    userId: userId
+  });
+  let res;
+  try{
+  res = await axios.post('/order-status', body, config)
+  return res.data
+  }catch(err){
+    console.log(`error while approving data`, err);
+    return err;
   }
 }
 
 export const activateOrder = async itemId => {
-
   let res;
   const config = {
     headers: {
-      "Content-Type": 'application/json'
+      "Content-Type": "application/json"
     }
-  }
+  };
 
   const body = JSON.stringify({
     itemId: itemId,
-    updateSta: 'approveOrder',
-    status: 'Active'
+    updateSta: "approveOrder",
+    status: "Active"
+  });
 
-  })
-
-
-  try{
-    res = await axios.post('/order-status-info', body, config);
-    return res.data
+  try {
+    res = await axios.post("/order-status-info", body, config);
+    return res.data;
   } catch (error) {
-    console.log(`Encountered error while approving order`, error)
+    console.log(`Encountered error while approving order`, error);
     return error;
   }
-
-
-}
+};
 
 export const updateEntry = async data => {
   const config = {
@@ -134,9 +185,22 @@ export const addDataToDb = async data => {
     version: data.catalogueData.version,
     itemId: uniqid(),
     status: data.status
-    
   });
 
   let res = await axios.post("/order-catalogue-form", body, config);
   return { getData: res.data };
+};
+
+export const removeItemFromCart = (cartItems, cartItemToRemove) => {
+  console.log(`removeItemFromCart`, cartItems);
+  console.log(`removeItemFromCart`, cartItemToRemove);
+  const exisistingCartITem = cartItems.find(
+    cartItem => cartItem.item_id === cartItemToRemove.item_id
+  );
+
+  if (exisistingCartITem) {
+    return cartItems.filter(
+      cartItem => cartItem.item_id !== cartItemToRemove.item_id
+    );
+  }
 };

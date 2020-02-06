@@ -39,7 +39,7 @@ export class Login extends Component {
     this.setState({ [e.target.name]: e.target.value });
   }
   render() {
-    console.log(`props login`, this.props);
+    
     if (this.props.isAuthenticated) {
       return <Redirect to="/service-catalogue" />;
     }

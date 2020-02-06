@@ -2,9 +2,9 @@ import axios from "axios";
 import { returnErrors } from "./messages";
 
 import {
-  USER_LOADED,
+  /*USER_LOADED,
   USER_LOADING,
-  AUTH_ERROR,
+  AUTH_ERROR,*/
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   LOGOUT_SUCCESS,
@@ -13,7 +13,7 @@ import {
 } from "./types";
 
 // CHECK TOKEN & LOAD USER
-export const loadUser = () => (dispatch, getState) => {
+/*export const loadUser = () => (dispatch, getState) => {
   // User Loading
   dispatch({ type: USER_LOADING });
 
@@ -40,7 +40,7 @@ export const loadUser = () => (dispatch, getState) => {
         type: AUTH_ERROR
       });
     });
-};
+};*/
 
 //Login user
 export const login = (username, password) => dispatch => {

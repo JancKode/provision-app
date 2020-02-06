@@ -1,4 +1,10 @@
-import React, { Component, Fragment, useEffect } from "react";
+import React, {
+  Component,
+  Fragment,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
 import { createStructuredSelector } from "reselect";
 
 import uniqid from "uniqid";
@@ -8,7 +14,7 @@ import { connect } from "react-redux";
 import { withAlert } from "react-alert";
 import { compose } from "redux";
 
-import { getData } from "../../../reducers/cart/cart.utils";
+import { getData, orderData } from "../../../reducers/cart/cart.utils";
 import { selectCartItems } from "../../../reducers/cart/cart.selector";
 import authReducer from "../../../reducers/auth";
 import { authProperties } from "../../../reducers/auth.selector";
@@ -16,18 +22,32 @@ import { authProperties } from "../../../reducers/auth.selector";
 import Dashboard from "../../dashboard/Dashboard";
 import FormInput from "../../form-input/form-input.component";
 import ConfirmDialog from "../../Dialog/confirm.dialog.component";
+import ReactTable from "../../table/table.compoent";
+import Style from "../../table/table.styles";
 
 import Bag from "@material-ui/icons/LocalMallOutlined";
 import ArrowBack from "@material-ui/icons/ArrowBackIosOutlined";
 
-const OrderStatusPageContainer = ({ auth, cartItems, alert }) => {
+function OrderStatusPageContainer({ auth, cartItems, alert, getOrderData }) {
   const { isAuthenticated, order_data } = auth;
+  const [orderData, setOrderData] = useState(cartItems);
   let cartItem = [];
   let finalList = [];
+  
+
   useEffect(() => {
-    
-  })
-  console.log(`cartcartItems`, cartItems);
+    console.log(`finaasdsadlList`)
+    setOrderData(getOrderData(auth.uid))
+    // setOrderData()
+  }, [orderData])
+
+  // getOrderData(auth.uid)
+  
+
+  
+  // console.log(otherProps.orderData(auth.uid))
+
+  console.log(`cartcartItems`, cartItems.order_data);
   if (cartItems && cartItems.length > 0) {
     cartItem = cartItems.map(item => {
       return {
@@ -42,23 +62,24 @@ const OrderStatusPageContainer = ({ auth, cartItems, alert }) => {
         order_date: "2019-12-06T12:23:34.918961",
         price: item.price,
         service: item.service,
-        status: 'Not Active',
+        status: "Not Active",
         subscriber: item.first_name,
         url: null,
         version: item.version,
         item_id: item.item_id
       };
     });
-    finalList = [...order_data, ...cartItem];
+    
   }
-
+  
+  finalList = cartItems.order_data;
   console.log(`finalList`, finalList);
   return (
     <Dashboard>
       {isAuthenticated ? (
         <OrderStatusComponent
           cartItems={finalList}
-          order_data={order_data}
+          // order_data={order_data}
           alert={alert}
         />
       ) : (
@@ -66,10 +87,13 @@ const OrderStatusPageContainer = ({ auth, cartItems, alert }) => {
       )}
     </Dashboard>
   );
-};
+}
 
-export const OrderStatusInfoPageContainer = ({ auth, match, ...otherProps }) => {
-  console.log(`OrderStatusInfoPageContainer`, match)
+export const OrderStatusInfoPageContainer = ({
+  auth,
+  match,
+  ...otherProps
+}) => {
   return (
     <Dashboard>
       <OrderStatusInfoComponent data={{ auth, otherProps, match }} />
@@ -77,106 +101,53 @@ export const OrderStatusInfoPageContainer = ({ auth, match, ...otherProps }) => 
   );
 };
 
-export const OrderStatusComponent = ({ cartItems, order_data }) => {
-  console.log(`cartItems[order_data]`, cartItems);
-  const orderList = cartItems.length ? cartItems : order_data; //[JSON.parse(localStorage.getItem("catalogueFormData"))];
-  const approvalStatusClass = (approvalStatusCode) => {
-    console.log(`approvalStatusCode`, approvalStatusCode)
-    if(approvalStatusCode === 'Cancelled' || !approvalStatusCode) {
-      return 'status-orange'
-    }else if (approvalStatusCode === 'Active' || approvalStatusCode === true){
-      return 'status-green'
-    } else {
-      return ''
-    }
-  }
-  let orderItems = "";
-  let currentDate = new Date()
-    .toJSON()
-    .slice(0, 10)
-    .replace(/-/g, "/");
-  console.log(`orderList`, orderList);
-  if (orderList) {
-    orderItems = orderList.map(item => (
-      <tr key={uniqid()}>
-        <td className="td-select-all">
-          <input type="checkbox" />
-        </td>
-        <td className="td-logo-ico">
-          <img
-            src={require(`../../../assets/images/logo-${item.logo}.png`)}
-            alt="logo"
-          />
-        </td>
-        <td className="td-service">{`${(item.service)} ${item.version}`}</td>
-        <td className="td-subscriber">
-          <Link
-            to={{
-              pathname: "/order-status-info",
-              item_id: item.item_id
-            }}
-          >
-            {`${item.first_name} ${item.last_name}`}
-          </Link>
-        </td>
-        <td className="td-approval-status">
-          <span className={`span-status ${approvalStatusClass(item.approval_status)}`}>{!item.approval_status ? 'Pending' : 'Approved'}</span>
-        </td>
-        <td className="td-url">http://192.168.1.1/</td>
-        <td className="td-date">
-          {item.order_date
-            ? item.order_date.slice(0, 10).replace(/-/g, "/")
-            : currentDate}
-        </td>
-        <td className="td-status">
-  <span className={`span-status ${approvalStatusClass(item.status)}`}>{item.status}</span>
-        </td>
-        <td className="td-approved-by">Beatrix, A.</td>
-        <td className="td-delete">
-          <i className="ti ti-close"></i>
-        </td>
-        <td className="td-approve">
-          <button className="btn btn-outline btn-outline-green">Approve</button>
-        </td>
-      </tr>
-    ));
+class OrderStatusComponent extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      currentDate: new Date()
+        .toJSON()
+        .slice(0, 10)
+        .replace(/-/g, "/"),
+      status: "Not Active"
+    };
+
+    this.updateStatus = this.updateStatus.bind(this);
   }
 
-  return (
-    <div className="content order-status">
-      <div className="title-bc">
-        <h1>Order and Status</h1>
+  componentDidMount(){
+    console.log(`this.paorspor`, this.props)
+  }
+
+  updateStatus(statusText) {
+    this.setState({
+      status: statusText
+    });
+  }
+
+  render() {
+    const { cartItems } = this.props;
+    const { status } = this.state;
+
+    // const orderList = cartItems.length ? cartItems : order_data; //[JSON.parse(localStorage.getItem("catalogueFormData"))];
+
+    return (
+      <div className="content order-status">
+        <div className="title-bc">
+          <h1>Order and Status</h1>
+        </div>
+        
+        {cartItems ? <OrderStatusTable data={cartItems} updateStatus={this.updateStatus} /> : 'Loading...'}
       </div>
-      <div className="content-container">
-        <table>
-          <thead>
-            <tr>
-              <th className="select-all">
-                <input type="checkbox" />
-              </th>
-              <th className="logo-ico"></th>
-              <th className="service">Service</th>
-              <th>Subscriber</th>
-              <th className="approval-status">Approval Status</th>
-              <th>URL</th>
-              <th>Order Date</th>
-              <th className="th-status">Status</th>
-              <th>Approved by</th>
-              <th className="th-delete"></th>
-              <th className="th-approve"></th>
-            </tr>
-          </thead>
-          <tbody>{orderItems}</tbody>
-        </table>
-      </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 export class OrderStatusInfoComponent extends Component {
   constructor(props) {
     super(props);
-    
+
     const { auth } = this.props.data;
     const { catalogue } = this.props.data.otherProps.location;
 
@@ -194,7 +165,7 @@ export class OrderStatusInfoComponent extends Component {
       orderDetail: "",
       service: "",
       logo: "aws",
-      status: 'Not Active',
+      status: "Not Active",
       addNewCatalogue:
         this.props.data && this.props.data.otherProps
           ? this.props.data.otherProps.location.addCatalogue
@@ -209,7 +180,6 @@ export class OrderStatusInfoComponent extends Component {
     const { error, success } = this.props.data.otherProps.alert;
     const { addNewCatalogue } = this.state;
 
-    
     console.log(`addNewCatalogue`, addNewCatalogue);
     if (addNewCatalogue === undefined) {
       try {
@@ -233,7 +203,6 @@ export class OrderStatusInfoComponent extends Component {
           status: itemData.status
         });
       } catch (e) {
-        
         error(e);
       }
     }
@@ -251,7 +220,7 @@ export class OrderStatusInfoComponent extends Component {
   };
 
   render() {
-    const { data  } = this.props;
+    const { data } = this.props;
     const {
       auth,
       first_name,
@@ -268,9 +237,11 @@ export class OrderStatusInfoComponent extends Component {
       price,
       version,
       status,
-      itemId, 
+      itemId,
       approvalStatus
     } = this.state;
+
+    const { updateStatus } = this.props.data.otherProps.location;
 
     console.log(`match `, this.props);
     console.log(`secondaryMobile`, secondaryMobile);
@@ -304,12 +275,12 @@ export class OrderStatusInfoComponent extends Component {
                 data={this.state}
                 addOrder={addNewCatalogue ? true : false}
                 alert={alert}
-                message={'Add this order?'}
-                match = {data.match}
-                buttonClass='btn-green'
-                type= {addNewCatalogue ? 'add' : 'activate'}
+                message={"Add this order?"}
+                match={data.match}
+                buttonClass="btn-green"
+                type={addNewCatalogue ? "Add" : "Activate"}
                 itemId={itemId}
-                
+                updateStatus={updateStatus}
               />
               <ConfirmDialog
                 className="btn btn-orange"
@@ -317,18 +288,20 @@ export class OrderStatusInfoComponent extends Component {
                 data={this.state}
                 addOrder={addNewCatalogue ? true : false}
                 alert={alert}
-                message={'Cancel this order?'}
-                match = {data.match}
-                type='cancel'
-                buttonClass='btn-outline-orange'
-                itemId={itemId} />
+                message={"Cancel this order?"}
+                match={data.match}
+                type="Cancel"
+                buttonClass="btn-outline-orange"
+                itemId={itemId}
+                updateStatus={updateStatus}
+              />
 
               {/* <Link
                 to={addNewCatalogue ? "/service-catalogue" : "/order-status"}
               >
                 <button className="btn btn-outline-orange" onClick={this.handleClick}>Cancel</button>
               </Link> */}
-              
+
               <div
                 className={`cat cat-${catalogueData ? catalogueData.id : logo}`}
               >
@@ -395,7 +368,7 @@ export class OrderStatusInfoComponent extends Component {
                             handleChange={this.handleChange}
                           />
                         ) : (
-                          <strong> { last_name}</strong>
+                          <strong> {last_name}</strong>
                         )}
                       </Fragment>
                     </div>
@@ -469,7 +442,7 @@ export class OrderStatusInfoComponent extends Component {
                 </div>
                 <div className="info-group">
                   <p className="label">Approval Status</p>
-                    <span className="span-status">{approvalStatus}</span>
+                  <span className="span-status">{approvalStatus}</span>
                 </div>
                 <div className="info-group">
                   <p className="label">URL</p>
@@ -492,12 +465,167 @@ export class OrderStatusInfoComponent extends Component {
   }
 }
 
+function OrderStatusTable({ data, updateStatus }) {
+  const approvalStatusClass = approvalStatusCode => {
+    if (approvalStatusCode === "Cancelled" || !approvalStatusCode) {
+      return "status-orange";
+    } else if (approvalStatusCode === "Active" || approvalStatusCode === true) {
+      return "status-green";
+    } else {
+      return "";
+    }
+  };
+
+  const columns = useMemo(
+    () => [
+      {
+        Header: () => <input key={uniqid()} type="checkbox" />,
+        accessor: "service",
+        width: 30,
+        className: "select-all",
+        Cell: props => <input key={uniqid()} type="checkbox" />
+      },
+      {
+        Header: "",
+        accessor: "logo",
+        width: 70,
+
+        className: "logo-ico",
+        Cell: props => (
+          <img
+            className="td-logo-ico"
+            style={{
+              height: "auto",
+              width: "100%"
+            }}
+            src={require(`../../../assets/images/logo-${props.cell.value}.png`)}
+            alt="logo"
+          />
+        )
+      },
+
+      {
+        Header: "Service",
+        accessor: "service",
+        width: 150,
+        className: "service"
+      },
+      {
+        Header: "Subscriber",
+        accessor: "subscriber",
+        className: "td-subscriber",
+        Cell: props => (
+          <Link
+            to={{
+              pathname: "/order-status-info",
+              item_id: props.cell.row.original.item_id,
+              updateStatus: updateStatus
+            }}
+          >
+            {props.cell.value}
+          </Link>
+        )
+      },
+      {
+        Header: "Approval Status",
+        accessor: "approval_status",
+        className: "td-approval-status",
+        Cell: props => (
+          <span
+            key={uniqid()}
+            className={`span-status ${approvalStatusClass(props.cell.value)}`}
+          >
+            {!props.cell.value ? "Pending" : "Approved"}
+          </span>
+        )
+      },
+      {
+        Header: "URL",
+        accessor: "url"
+      },
+      {
+        Header: "Order Date",
+        accessor: "order_date",
+        Cell: props =>
+          props.cell.value
+            ? props.cell.value.slice(0, 10).replace(/-/g, "/")
+            : this.state.currentDate
+      },
+      {
+        Header: "Status",
+        accessor: "status",
+        className: "td-status",
+        Cell: props => (
+          <span
+            className={`span-status ${approvalStatusClass(props.cell.value)}`}
+          >
+            {props.cell.value}
+          </span>
+        )
+      },
+      {
+        Header: "Approved by",
+        accessor: "approved_by"
+      },
+      {
+        Header: "Action",
+        accessor: "null",
+        className: "td-approve",
+        Cell: props => (
+          <ConfirmDialog
+                className="btn btn-orange"
+                // handleClick={addNewCatalogue ? "catalogueFormData" : "Approve"}
+                data={props.cell.row.original}
+                
+                
+                alert={alert}
+                message={"Approve this item?"}
+                
+                type="Approve"
+                buttonClass="btn-outline btn-outline-green"
+                
+                
+              />
+          // <button className="btn btn-outline btn-outline-green">Approve</button>
+        )
+      }
+    ],
+    []
+  );
+
+  return (
+    <Style className="content-container">
+      <ReactTable
+        columns={columns}
+        data={data}
+        /*getHeaderProps={column => ({
+        onClick: () => alert('Header!'),
+      })}
+      getColumnProps={column => ({
+        onClick: () => alert('Column!'),
+      })}*/
+        // getRowProps={row => ({
+        //   style: {
+        //     background: row.index % 2 === 0 ? 'rgba(0,0,0,.1)' : 'white',
+        //   },
+        // })}
+        dataLength={data ? data.length : 0}
+        getCellProps={cellInfo => ({})}
+      />
+    </Style>
+  );
+}
+
 const mapStateToProps = createStructuredSelector({
   auth: authProperties,
   cartItems: selectCartItems
 });
 
-const connectContainer = compose(withAlert(), connect(mapStateToProps));
+const mapDispatchToProps = dispatch => ({
+  getOrderData: data => dispatch(orderData(data))
+})
+
+const connectContainer = compose(withAlert(), connect(mapStateToProps, mapDispatchToProps))
 export const OrderStatusPage = connectContainer(OrderStatusPageContainer);
 export const OrderStatusInfoPage = connectContainer(
   OrderStatusInfoPageContainer

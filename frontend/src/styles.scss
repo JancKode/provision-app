@@ -207,7 +207,7 @@ input {
       display: flex;
       margin: 0;
       padding: 0;
-      min-width: 100vw;
+      min-width: 99vw;
     }
     .dashboard-content {
       .nav {
@@ -425,111 +425,111 @@ input {
         }
 
         &.order-status {
-          .content-container {
-            table {
-              table-layout: fixed;
-              border-collapse: collapse;
-              width: 100%;
-              font-family: "Roboto Condensed", Arial, Helvetica, sans-serif;
-              font-size: 14px;
-              thead {
-                tr {
-                  th {
-                    padding: 0.5rem;
-                    &.select-all {
-                      width: 36px;
-                    }
-                    &.logo-ico {
-                      width: 72px;
-                    }
-                    &.th-delete {
-                      width: 42px;
-                    }
-                    &.th-approve {
-                      width: 100px;
-                    }
-                    &.th-status {
-                      width: 110px;
-                    }
-                  }
-                }
-              }
-              tbody {
-                tr {
-                  background: white;
-                  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.09);
-                  transition: all 0.5s ease;
-                  td {
-                    padding: 0.5rem;
-                    height: 48px;
-                    border-bottom: 1px solid #ddd;
-                    &.td-select-all {
-                      text-align: center;
-                    }
-                    &.td-logo-ico {
-                      img {
-                        width: 100%;
-                        height: auto;
-                      }
-                    }
-                    &.td-subscriber {
-                      font-weight: bold;
-                    }
-                    &.td-approval-status,
-                    &.td-status {
-                      text-align: center;
-                      .span-status {
-                        padding: 0.2rem 1rem;
-                        font-weight: bold;
-                        color: white;
-                        background: #aaa;
-                        border-radius: 3px;
-                      }
-                      .status-green {
-                        color: $green;
-                        background: none;
-                      }
-                      .status-orange {
-                        background: $orange;
-                      }
-                    }
-                    &.td-url {
-                      text-align: center;
-                    }
-                    &.td-date {
-                      text-align: center;
-                    }
-                    &.td-delete {
-                      color: $orange;
-                    }
-                    &.td-approve {
-                      button {
-                        height: 36px;
-                        width: 100%;
-                        font-family: "Roboto Condensed", Arial, Helvetica,
-                          sans-serif;
-                        cursor: pointer;
-                      }
-                    }
-                    &.td-approved-by {
-                      text-align: center;
-                    }
-                  }
-                }
-                tr:nth-child(even) {
-                  background-color: #f4f4f4;
-                  &:hover {
-                    background: #ebf2ff;
-                  }
-                }
-                tr {
-                  &:hover {
-                    background: #ebf2ff;
-                  }
-                }
-              }
-            }
-          }
+         // .content-container {
+            // table {
+            //   table-layout: fixed;
+            //   border-collapse: collapse;
+            //   width: 100%;
+            //   font-family: "Roboto Condensed", Arial, Helvetica, sans-serif;
+            //   font-size: 14px;
+            //   thead {
+            //     tr {
+            //       th {
+            //         padding: 0.5rem;
+            //         &.select-all {
+            //           width: 36px;
+            //         }
+            //         &.logo-ico {
+            //           width: 72px;
+            //         }
+            //         &.th-delete {
+            //           width: 42px;
+            //         }
+            //         &.th-approve {
+            //           width: 100px;
+            //         }
+            //         &.th-status {
+            //           width: 110px;
+            //         }
+            //       }
+            //     }
+            //   }
+            //   tbody {
+            //     tr {
+            //       background: white;
+            //       box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.09);
+            //       transition: all 0.5s ease;
+            //       td {
+            //         padding: 0.5rem;
+            //         height: 48px;
+            //         border-bottom: 1px solid #ddd;
+            //         &.td-select-all {
+            //           text-align: center;
+            //         }
+            //         &.td-logo-ico {
+            //           img {
+            //             width: 100%;
+            //             height: auto;
+            //           }
+            //         }
+            //         &.td-subscriber {
+            //           font-weight: bold;
+            //         }
+            //         &.td-approval-status,
+            //         &.td-status {
+            //           text-align: center;
+            //           .span-status {
+            //             padding: 0.2rem 1rem;
+            //             font-weight: bold;
+            //             color: white;
+            //             background: #aaa;
+            //             border-radius: 3px;
+            //           }
+            //           .status-green {
+            //             color: $green;
+            //             background: none;
+            //           }
+            //           .status-orange {
+            //             background: $orange;
+            //           }
+            //         }
+            //         &.td-url {
+            //           text-align: center;
+            //         }
+            //         &.td-date {
+            //           text-align: center;
+            //         }
+            //         &.td-delete {
+            //           color: $orange;
+            //         }
+            //         &.td-approve {
+            //           button {
+            //             height: 36px;
+            //             width: 100%;
+            //             font-family: "Roboto Condensed", Arial, Helvetica,
+            //               sans-serif;
+            //             cursor: pointer;
+            //           }
+            //         }
+            //         &.td-approved-by {
+            //           text-align: center;
+            //         }
+            //       }
+            //     }
+            //     tr:nth-child(even) {
+            //       background-color: #f4f4f4;
+            //       &:hover {
+            //         background: #ebf2ff;
+            //       }
+            //     }
+            //     tr {
+            //       &:hover {
+            //         background: #ebf2ff;
+            //       }
+            //     }
+            //   }
+            // }
+         // }
         }
 
         &.order-status-info {

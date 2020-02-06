@@ -65,16 +65,16 @@ def login():
 
     if existing_user and check_password_hash(existing_user.password, password):
         login_user(existing_user)
-        records = Orders.query.filter(
-            Orders.user_id == str(existing_user.uuid)).all()
-        order_schema = OrderSchema(many=True)
-        order_data = order_schema.dump(records)
+        #records = Orders.query.filter(
+        # Orders.user_id == str(existing_user.uuid)).all()
+        #order_schema = OrderSchema(many=True)
+        #order_data = order_schema.dump(records)
         session['user_id'] = str(existing_user.uuid)
         access_token = create_access_token(identity={
             'username': existing_user.username,
             'email': existing_user.email
         })
-        return jsonify({'token': access_token, 'first_name': existing_user.first_name, 'last_name': existing_user.last_name, 'email': existing_user.email, 'uid': str(existing_user.uuid), 'order_data': order_data})
+        return jsonify({'token': access_token, 'first_name': existing_user.first_name, 'last_name': existing_user.last_name, 'email': existing_user.email, 'uid': str(existing_user.uuid)})#, 'order_data': order_data
     else:
         return jsonify({'result': 'Invalid username or password'})
 

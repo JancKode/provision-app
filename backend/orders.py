@@ -55,6 +55,39 @@ def orderForm():
     return 'request not found'
 
 
+@order.route('/order-status', methods=['POST', 'GET'])
+def getOrderData():
+    if request.method == 'POST':
+        user_id = request.get_json()['userId']
+        update_status = request.get_json()['updateSta']
+        
+        
+        if user_id:
+            records = Orders.query.filter(
+                    Orders.user_id == str(user_id)).order_by(Orders.order_date).all()
+            order_schema = OrderSchema(many=True)
+            order_data = order_schema.dump(records)
+
+            if update_status == 'approveOrder':
+                item_id = request.get_json()['itemId']
+                approval_status = request.get_json()['approvalStatus']
+                item = Orders.query.filter_by(item_id=item_id).first()
+
+
+                item.approval_status = approval_status;
+                db.session.commit()
+
+
+
+            return jsonify({'order_data' : order_data, 'status' : 'Ok'})
+
+        else:
+            return jsonify({'order_data': [], 'staus' : 'Error'})
+       
+            
+    
+    return '/order-status, request not valid'
+
 @order.route('/order-status-info', methods=['POST', 'GET', 'PUT'])
 def updateForm():
     if request.method == 'POST':
@@ -97,6 +130,10 @@ def updateForm():
         elif update_status == 'cancelOrder':
             order_status = request.get_json()['status']
             item_detail.status = order_status
+            db.session.commit()
+        elif update_status == 'approveOrder':
+            approval_status = request.get_json()[approvalStatus]
+            item_detail.approval_status = approval_status
             db.session.commit()
 
 
