@@ -14,7 +14,6 @@ export class Alert extends Component {
 
     if (message !== prevProps.error.msg) {
       if (
-        error.msg === "User already exists" ||
         error.msg === "Invalid username or password" ||
         error.msg === "No user found" ||
         error.msg === "Email already exists, please register a new one"

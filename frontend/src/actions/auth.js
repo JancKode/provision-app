@@ -43,7 +43,7 @@ import {
 };*/
 
 //Login user
-export const login = (username, password) => dispatch => {
+export const login = (username, password, alert) => dispatch => {
   //Headers
   const config = {
     headers: {
@@ -52,7 +52,7 @@ export const login = (username, password) => dispatch => {
   };
 
   //Request Body
-  const body = JSON.stringify({ username, password });
+  const body = JSON.stringify({ username, password});
   console.log(`body`, body);
   axios
     .post("/login", body, config)
@@ -67,6 +67,7 @@ export const login = (username, password) => dispatch => {
           type: LOGIN_FAIL
         });
       } else {
+        alert.success(`Welcome back ${res.data.first_name}!`)
         dispatch({
           type: LOGIN_SUCCESS,
           payload: res.data
@@ -89,7 +90,8 @@ export const register = ({
   last_name,
   username,
   password,
-  email
+  email, 
+  alert
 }) => dispatch => {
   //Headers
   const config = {
@@ -114,11 +116,13 @@ export const register = ({
         res.data.result === "User already exists" ||
         res.data.result === "Email already exists, please register a new one"
       ) {
+        alert.error(res.data.result)
         dispatch(returnErrors(res.data.result, res.status));
         dispatch({
           type: REGISTER_FAIL
         });
       } else {
+        alert.success(`Registered successfully`)
         dispatch({
           type: REGISTER_SUCCESS,
           payload: res.data
@@ -126,6 +130,7 @@ export const register = ({
       }
     })
     .catch(err => {
+      alert.error(err.response.status)
       dispatch(returnErrors(err.response.data, err.response.status));
       dispatch({
         type: REGISTER_FAIL

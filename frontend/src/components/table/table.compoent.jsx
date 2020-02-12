@@ -1,5 +1,9 @@
-import React, { Fragment } from 'react'
-import { useTable, usePagination } from 'react-table';
+import React, { Fragment, forwardRef, useRef, useEffect } from 'react'
+import { useTable, usePagination, useGroupBy,
+  useFilters,
+  useSortBy,
+  useExpanded,
+  useRowSelect, } from 'react-table';
 
 // import Pagination from '../pagination/pagination.component'
 
@@ -36,7 +40,7 @@ export default function ReactTable({
     previousPage,
     setPageSize,
     
-    state: { pageIndex, pageSize },
+    state: { pageIndex, pageSize, selectedRowIds },
   } = useTable({
     columns,
     data,
@@ -44,7 +48,40 @@ export default function ReactTable({
     initialState: { pageIndex: 0 },
     
   },
-    usePagination
+  useFilters,
+  useGroupBy,
+  useSortBy,
+  useExpanded,
+  usePagination,
+  useRowSelect,
+    hooks => {
+      hooks.flatColumns.push(columns => {
+        return [
+          {
+            id: 'selection',
+            // Make this column a groupByBoundary. This ensures that groupBy columns
+            // are placed after it
+            groupByBoundary: true,
+            // The header can use the table's getToggleAllRowsSelectedProps method
+            // to render a checkbox
+            className: 'select-all',
+            Header: ({ getToggleAllRowsSelectedProps }) => (
+             
+                <CheckBox {...getToggleAllRowsSelectedProps()} />
+            
+            ),
+            // The cell can use the individual row's getToggleRowSelectedProps method
+            // to the render a checkbox
+            Cell: ({ row }) => (
+              
+                <CheckBox {...row.getToggleRowSelectedProps()} />
+           
+            ),
+          },
+          ...columns,
+        ]
+      })
+    }
   )
 
   
@@ -148,6 +185,24 @@ export default function ReactTable({
     </Fragment>
   )
 }
+
+
+const CheckBox = forwardRef(
+  ({ indeterminate, ...rest }, ref) => {
+    const defaultRef = useRef()
+    const resolvedRef = ref || defaultRef
+
+    useEffect(() => {
+      resolvedRef.current.indeterminate = indeterminate
+    }, [resolvedRef, indeterminate])
+
+    return (
+      
+        <input type="checkbox" ref={resolvedRef} {...rest} />
+     
+    )
+  }
+)
 
 // function App() {
 //   const columns = React.useMemo(

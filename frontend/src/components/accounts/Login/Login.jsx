@@ -6,6 +6,9 @@ import { withAlert} from 'react-alert'
 import PropTypes from "prop-types";
 import { login } from "../../../actions/auth";
 
+
+import { Fragment } from "react";
+
 import "./Login.styles.scss";
 
 export class Login extends Component {
@@ -29,9 +32,10 @@ export class Login extends Component {
   com;
 
   onSubmit(e) {
-    const {username, password} = this.state
+    const {username, password} = this.state;
+    const { alert } = this.props;
     e.preventDefault();
-    this.props.login(username, password);
+    this.props.login(username, password, alert);
     
   }
 
@@ -39,7 +43,7 @@ export class Login extends Component {
     this.setState({ [e.target.name]: e.target.value });
   }
   render() {
-    
+    console.log(`login props`, this.props)
     if (this.props.isAuthenticated) {
       return <Redirect to="/service-catalogue" />;
     }

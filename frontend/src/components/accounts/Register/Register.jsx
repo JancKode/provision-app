@@ -42,6 +42,7 @@ export class Register extends Component {
       password,
       password2
     } = this.state;
+    const { alert } = this.props;
 
     // console.log("register[error]", error);
     if (!username) {
@@ -61,7 +62,8 @@ export class Register extends Component {
         last_name,
         username,
         password,
-        email
+        email,
+        alert
       };
       this.props.register(newUser);
     }

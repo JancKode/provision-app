@@ -64,7 +64,7 @@ function OrderStatusPageContainer({ auth, cartItems, alert, getOrderData }) {
         service: item.service,
         status: "Not Active",
         subscriber: item.first_name,
-        url: null,
+        url: item.url,
         version: item.version,
         item_id: item.item_id
       };
@@ -286,7 +286,7 @@ export class OrderStatusInfoComponent extends Component {
                 className="btn btn-orange"
                 handleClick={addNewCatalogue ? "catalogueFormData" : "Approve"}
                 data={this.state}
-                addOrder={addNewCatalogue ? true : false}
+                addOrder={addNewCatalogue ? true : false}  
                 alert={alert}
                 message={"Cancel this order?"}
                 match={data.match}
@@ -478,13 +478,13 @@ function OrderStatusTable({ data, updateStatus }) {
 
   const columns = useMemo(
     () => [
-      {
+      /*{
         Header: () => <input key={uniqid()} type="checkbox" />,
         accessor: "service",
         width: 30,
         className: "select-all",
         Cell: props => <input key={uniqid()} type="checkbox" />
-      },
+      },*/
       {
         Header: "",
         accessor: "logo",
