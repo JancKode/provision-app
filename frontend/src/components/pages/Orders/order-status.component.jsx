@@ -36,7 +36,6 @@ function OrderStatusPageContainer({ auth, cartItems, alert, getOrderData }) {
   
 
   useEffect(() => {
-    console.log(`finaasdsadlList`)
     setOrderData(getOrderData(auth.uid))
     // setOrderData()
   }, [orderData])
@@ -303,7 +302,7 @@ export class OrderStatusInfoComponent extends Component {
               </Link> */}
 
               <div
-                className={`cat cat-${catalogueData ? catalogueData.id : logo}`}
+                className={`cat cat-${catalogueData ? catalogueData.logo : logo}`}
               >
                 <div className="cat-border"></div>
                 <div className="ico-cart">
@@ -313,9 +312,11 @@ export class OrderStatusInfoComponent extends Component {
                   alt="logo"
                   className="cat-logo"
                   src={require(`../../../assets/images/logo-${
-                    catalogueData ? catalogueData.id : logo
+                    catalogueData ? catalogueData.logo : logo
                   }.png`)}
+                  
                 />
+                {console.log(`catalogueDatacatalogueData`, catalogueData)}
                 <div className="cat-info-left">
                   <span>
                     <strong>
@@ -492,6 +493,7 @@ function OrderStatusTable({ data, updateStatus }) {
 
         className: "logo-ico",
         Cell: props => (
+          
           <img
             className="td-logo-ico"
             style={{

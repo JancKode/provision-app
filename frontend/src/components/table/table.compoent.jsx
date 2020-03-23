@@ -92,8 +92,9 @@ export default function ReactTable({
         {headerGroups.map(headerGroup => (
           <tr key={uId} {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map(column => (
-              <th key={uId} 
-                // Return an array of prop objects and react-table will merge them appropriately
+              <th 
+               // Return an array of prop objects and react-table will merge them appropriately
+
                 {...column.getHeaderProps([
                   {
                     className: column.className,
@@ -101,9 +102,17 @@ export default function ReactTable({
                   },
                   getColumnProps(column),
                   getHeaderProps(column),
+                  column.getSortByToggleProps()
                 ])}
               >
                 {column.render('Header')}
+                <span>
+                    {column.isSorted
+                      ? column.isSortedDesc
+                        ? ' 🔽'
+                        : ' 🔼'
+                      : ''}
+                </span>
               </th>
             ))}
           </tr>

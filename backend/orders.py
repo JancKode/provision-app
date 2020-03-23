@@ -2,6 +2,7 @@ from flask import Flask, Blueprint, request, session, redirect, url_for, jsonify
 from . import db
 from .models import Users, Orders, OrderSchema
 from datetime import datetime
+from sqlalchemy import and_
 
 
 order = Blueprint('order', __name__)
@@ -67,6 +68,7 @@ def getOrderData():
                     Orders.user_id == str(user_id)).order_by(Orders.order_date).all()
             order_schema = OrderSchema(many=True)
             order_data = order_schema.dump(records)
+            order_count = Orders.query.filter(and_(Orders.status == 'Active', Orders.user_id == str(user_id))).count()
 
             if update_status == 'approveOrder':
                 item_id = request.get_json()['itemId']
@@ -79,7 +81,7 @@ def getOrderData():
 
 
 
-            return jsonify({'order_data' : order_data, 'status' : 'Ok'})
+            return jsonify({'order_data' : order_data, 'status' : 'Ok', 'order_count': order_count})
 
         else:
             return jsonify({'order_data': [], 'staus' : 'Error'})

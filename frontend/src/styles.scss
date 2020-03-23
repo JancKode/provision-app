@@ -211,9 +211,9 @@ input {
     }
     .dashboard-content {
       .nav {
-        width: 100%;
-        min-width: 300px;
-        max-width: 300px;
+        width: 20vw;
+        // min-width: 300px;
+        // max-width: 300px;
         font-family: "Roboto Condensed", Arial, Helvetica, sans-serif;
         background: white;
         box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.09);
@@ -223,7 +223,7 @@ input {
           margin: 0;
           padding: 0;
           list-style: none;
-          width: 100%;
+          width: 30vw;
           li {
             padding: 1rem 0;
             border-bottom: 1px solid $bg-white-active;
@@ -658,4 +658,17 @@ input {
       }
     }
   }
+}
+
+
+/* Media Queries: Tablet Landscape */
+@media screen and (max-width: 1060px) {
+  #primary { width:67%; }
+  #secondary { width:30%; margin-left:3%;}  
+}
+
+/* Media Queries: Tabled Portrait */
+@media screen and (max-width: 768px) {
+  #primary { width:100%; }
+  #secondary { width:100%; margin:0; border:none; }
 }

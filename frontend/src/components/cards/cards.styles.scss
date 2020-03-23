@@ -10,6 +10,7 @@ $orange: #f8692b;
 
 * {
   box-sizing: border-box;
+  display: block;
 }
 .hide {
   display: none !important;
@@ -230,6 +231,7 @@ div {
         }
         .content-container {
           width: inherit;
+          display: block;
           .row {
             display: flex;
             flex-wrap: wrap;
@@ -349,6 +351,8 @@ div {
 
         &.order-status {
           .content-container {
+              display: block;
+
             table {
               table-layout: fixed;
               border-collapse: collapse;
@@ -457,4 +461,17 @@ div {
       }
     }
   }
+}
+
+
+/* Media Queries: Tablet Landscape */
+@media screen and (max-width: 1060px) {
+  #primary { width:67%; }
+  #secondary { width:30%; margin-left:3%;}  
+}
+
+/* Media Queries: Tabled Portrait */
+@media screen and (max-width: 768px) {
+  #primary { width:100%; }
+  #secondary { width:100%; margin:0; border:none; }
 }

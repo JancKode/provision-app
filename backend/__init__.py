@@ -47,4 +47,7 @@ def create_app():
     from .orders import order as order_blueprint
     app.register_blueprint(order_blueprint)
 
+    from .catalogue import catalogue as catalogue_blueprint
+    app.register_blueprint(catalogue_blueprint)
+
     return app

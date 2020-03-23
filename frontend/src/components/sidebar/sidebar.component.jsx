@@ -8,7 +8,7 @@ import LocalMallOutlinedIcon from "@material-ui/icons/LocalMallOutlined";
 
 const SidebarWrapper = () => {
   return (
-    <div class="container dashboard-content">
+    <div class="container dashboard-content ">
       <div className="nav">
         <ul>
           <li className="active">

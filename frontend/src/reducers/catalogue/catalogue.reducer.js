@@ -2,8 +2,10 @@ import CatalogueActionTypes from "./catalogue.types";
 
 import { serviceCatalogueData } from "../../components/cards/serviceCatalogueData";
 
+import {} from './catalogue.utils';
+
 const INITIAL_STATE = {
-  catalogues: serviceCatalogueData
+  catalogue: []
 };
 
 const catalogueReducer = (state = INITIAL_STATE, action) => {
@@ -11,8 +13,13 @@ const catalogueReducer = (state = INITIAL_STATE, action) => {
     case CatalogueActionTypes.UPDATE_CATALOGUE:
       return {
         ...state,
-        catalogues: action.payload
+        catalogue: action.payload
       };
+    case CatalogueActionTypes.GET_CATALOGUE:
+      return {
+        ...state,
+        catalogue: action.payload
+      }
     default:
       return state;
   }

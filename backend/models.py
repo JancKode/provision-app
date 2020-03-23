@@ -41,9 +41,24 @@ class Orders(UserMixin, db.Model):
     logo = db.Column(db.String(15))
     mobile = db.Column(db.String(40))
     secondary_mobile = db.Column(db.String(40))
-    
 
 
 class OrderSchema(mallow.ModelSchema):
     class Meta:
         model = Orders
+
+
+class CatalogueData(UserMixin, db.Model):
+    uid = db.Column(db.String(80), primary_key=True,
+                    nullable=False, unique=True)
+    service_id = db.Column(db.String(20), nullable=False)
+    title = db.Column(db.String(100), nullable=False)
+    version = db.Column(db.String(100), nullable=False)
+    price = db.Column(db.Numeric(10,3), nullable=False)
+    logo = db.Column(db.String(10), nullable=False)
+
+
+class CatalogueSchema(mallow.ModelSchema):
+    class Meta:
+        model = CatalogueData
+

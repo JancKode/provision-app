@@ -41,7 +41,10 @@ export class Header extends Component {
 
       <Link
         to="/login"
-        className="nav-link"
+        style={{
+          marginTop: '21px'
+        }}
+        // className="nav-link"
         onClick={() => {
           this.handleClick();
           this.props.logout();
@@ -95,8 +98,11 @@ export class Header extends Component {
                   ""
                 )}
                 <br />
-                {isAuthenticated ? authLinks : ""}
+                
+                  {isAuthenticated ? authLinks : ""}
+                
               </p>
+              
             </div>
             {isAuthenticated ? <div className="profile-img"></div> : ""}
           </div>

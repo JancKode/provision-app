@@ -55,6 +55,7 @@ virtualenv = "==16.7.5"
 virtualenv-clone = "==0.5.3"
 wrapt = "==1.11.2"
 Django = "==2.2.6"
+simplejson = "*"
 
 [requires]
 python_version = "3.8"

@@ -6,7 +6,7 @@ import Bag from "@material-ui/icons/LocalMallOutlined";
 
 const Sidebar = props => {
   return (
-    <div className="container dashboard-content">
+    <div className="container dashboard-content ">
       <div className="nav">
         <ul>
           <li className="active">
@@ -32,6 +32,7 @@ const Sidebar = props => {
               </span>
               Orders and Status
             </Link>
+            {console.log(`props.children`, props.children)}
             <span className="nav-notif">
               <span>3</span>
             </span>
