@@ -18,6 +18,9 @@ def catalogueData():
         catalogue_result = CatalogueData.query.filter().all()
         catalogue_schema = CatalogueSchema(many=True)
         catalogue_data = catalogue_schema.dump(catalogue_result)
+        catalogue_rows = CatalogueData.query.count()
+
+        print(catalogue_rows)
 
         return jsonify(catalogue_data)
         
