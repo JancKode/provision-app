@@ -1,9 +1,12 @@
 import React from "react";
 
 import { SpinnerContainer, SpinnerOverlay } from "./with-spinner.styles";
+// import { getCatalogueData } from "../../reducers/catalogue/catalogue.utils";
 
-const WithSpinner = WrappedComponent => {
-  const Spinner = ({ isLoading, ...otherProps }) => {
+export const WithSpinner = WrappedComponent => {
+  const Spinner = ({getCatalogueData, isLoading, ...otherProps }) => {
+
+    console.log(`isLoading`, getCatalogueData)
     return isLoading ? (
       <SpinnerOverlay>
         <SpinnerContainer />
@@ -14,3 +17,5 @@ const WithSpinner = WrappedComponent => {
   };
   return Spinner;
 };
+
+

@@ -17,10 +17,10 @@ export const getCatalogueData = () => dispatch => {
 
     try {
         res = axios.post("/service-catalogue", body, config).then(res => {
-            console.log(`inside getCatalogue`, res)
+            console.log(`res`, res)
             dispatch({
                 type: CatalogueActionTypes.GET_CATALOGUE,
-                payload: res.data
+                payload: res
             })
         })
     } catch(error){

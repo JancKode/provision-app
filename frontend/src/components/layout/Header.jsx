@@ -10,12 +10,24 @@ import { authProperties } from "../../reducers/auth.selector";
 
 // import MenuIcon from "@material-ui/icons/Menu";
 
+import { ToggleBarButton } from "../toggle-button/toggle-button.component";
+
+import {
+  NavBar,
+  ProfileArea,
+  ProfileInfo,
+  ProfileName,
+  ToggleBar,
+  ProfileWrapper,
+  InitialsWrapper
+} from "./header.styles.jsx";
+
 import "./header.styles.scss";
 
 export class Header extends Component {
   static propTypes = {
     auth: PropTypes.object.isRequired,
-    logout: PropTypes.func.isRequired
+    logout: PropTypes.func.isRequired,
   };
 
   handleClick() {
@@ -26,24 +38,9 @@ export class Header extends Component {
     console.log(`auth properties`, this.props.auth.first_name);
 
     const authLinks = (
-      // <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
-      //   <li className="nav-item">
-      //     <Link to="/login" className="nav-link">
-      //       <button
-      //         className="nav-link btn btn-primary btn-sm text-light"
-      //         onClick={this.props.logout}
-      //       >
-      //         Logout
-      //       </button>
-      //     </Link>
-      //   </li>
-      // </ul>
-
       <Link
         to="/login"
-        style={{
-          marginTop: '21px'
-        }}
+        className="link"
         // className="nav-link"
         onClick={() => {
           this.handleClick();
@@ -54,88 +51,36 @@ export class Header extends Component {
       </Link>
     );
 
-    /* const guestLinks = (
-      <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
-        <li className="nav-item">
-          <Link to="/register" className="nav-link">
-            Register
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/login" className="nav-link">
-            Login
-          </Link>
-        </li>
-      </ul>
-    ); */
-
     return (
-      <div id="dashboard" className="body">
-        <nav className="header navbar navbar-expand-sm navbar-light bg-light">
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarTogglerDemo01"
-            aria-controls="navbarTogglerDemo01"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
-            <Link className="navbar-brand" to="#">
-              {isAuthenticated ? "Welcome" : "Login"}
-            </Link>
-          </div>
-          <div className="profile-area">
-            <div className="profile-info">
-              <p style={{ marginTop: ".6rem" }}>
-                <span className="profile-name">{`${first_name} ${last_name}`}</span>
-                {isAuthenticated ? (
-                  <span className="profile-status">{"Admin"}</span>
-                ) : (
-                  ""
-                )}
-                <br />
-                
-                  {isAuthenticated ? authLinks : ""}
-                
-              </p>
-              
-            </div>
-            {isAuthenticated ? <div className="profile-img"></div> : ""}
-          </div>
-        </nav>
-      </div>
-      // <nav className="navbar navbar-expand-sm navbar-light bg-light">
-      //   <div className="container">
-      //     <button
-      //       className="navbar-toggler"
-      //       type="button"
-      //       data-toggle="collapse"
-      //       data-target="#navbarTogglerDemo01"
-      //       aria-controls="navbarTogglerDemo01"
-      //       aria-expanded="false"
-      //       aria-label="Toggle navigation"
-      //     >
-      //       <span className="navbar-toggler-icon"></span>
-      //     </button>
-      //     <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
-      //       <Link className="navbar-brand" to="#">
-      //         {isAuthenticated ? "Welcome" : "Login"}
-      //       </Link>
-      //     </div>
-      //     {user}
-      //     {isAuthenticated ? authLinks : guestLinks}
-      //   </div>
-      // </nav>
+      <NavBar className={isAuthenticated ? "authenticated" : "logout"}>
+        <div>
+          <ToggleBarButton />
+          <Link id="welcomeLink" className="link" to="#">
+            {isAuthenticated ? "Welcome" : "Login"}
+          </Link>
+        </div>
+        <ProfileArea>
+          <ProfileInfo>
+            <ProfileName className="profile-name">{`${first_name} ${last_name}`}</ProfileName>
+            {isAuthenticated ? (
+              <span className="profile-status">{"Admin"}</span>
+            ) : (
+              ""
+            )}
+            <br />
+            {isAuthenticated ? authLinks : ""}
+          </ProfileInfo>
+          {isAuthenticated ? <ProfileWrapper>
+            <InitialsWrapper>{first_name.charAt(0)}{last_name.charAt(0)}</InitialsWrapper>
+          </ProfileWrapper> : ""}
+        </ProfileArea>
+      </NavBar>
     );
   }
 }
 
 const mapStateToProps = createStructuredSelector({
-  auth: authProperties
+  auth: authProperties,
 });
 
 export default connect(mapStateToProps, { logout })(Header);

@@ -6,6 +6,8 @@ import { withAlert} from 'react-alert'
 import PropTypes from "prop-types";
 import { login } from "../../../actions/auth";
 
+import {WithSpinner} from '../../with-spinner/with-spinner.compoent';
+
 
 import { Fragment } from "react";
 
@@ -29,7 +31,6 @@ export class Login extends Component {
     this.onChange = this.onChange.bind(this);
   }
 
-  com;
 
   onSubmit(e) {
     const {username, password} = this.state;
@@ -50,6 +51,7 @@ export class Login extends Component {
     const { username, password } = this.state;
     return (
       <div id="login" className="login">
+        
         <div className="bg"></div>
         <div className="login-containter">
           <div className="logo">

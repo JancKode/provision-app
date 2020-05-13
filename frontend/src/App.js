@@ -1,6 +1,8 @@
 import React, { Fragment, Component } from "react";
 
 import Header from "./components/layout/Header";
+import Footer from "./components/layout/Footer"
+
 
 import { Route, Switch } from "react-router-dom";
 
@@ -15,6 +17,8 @@ import {
 } from "../src/components/pages/Orders/order-status.component";
 import Register from "./components/accounts/Register/Register";
 import PrivateRoute from "./components/common/PrivateRoute.jsx";
+
+import './styles.scss';
 
 class App extends Component {
   render() {
@@ -31,6 +35,7 @@ class App extends Component {
           <Route exact path="/order-catalogue-form" component={OrderStatusInfoPage} />
           <Route exact path="/order-status-info" component={OrderStatusInfoPage} />
         </Switch>
+        
       </Fragment>
     );
   }

@@ -28,6 +28,21 @@ import Style from "../../table/table.styles";
 import Bag from "@material-ui/icons/LocalMallOutlined";
 import ArrowBack from "@material-ui/icons/ArrowBackIosOutlined";
 
+import {OrderStatusContainer, 
+        TitleContainer,
+        OrderStatusInfoWrapper,
+        OrderStatusInfoContainer,
+        InfoContainer,
+        InfoDetailsContainer,
+        CatalogueImageContainer} from './order-status.styles';
+
+
+
+import './order-status-info.styles.scss'
+import LoadingBar from "../../loading-bar/loading-bar.component";
+
+import { setOnloadEvent } from '../../../utilities/helper'
+
 function OrderStatusPageContainer({ auth, cartItems, alert, getOrderData }) {
   const { isAuthenticated, order_data } = auth;
   const [orderData, setOrderData] = useState(cartItems);
@@ -109,14 +124,25 @@ class OrderStatusComponent extends Component {
         .toJSON()
         .slice(0, 10)
         .replace(/-/g, "/"),
-      status: "Not Active"
+      status: "Not Active",
+      loading: true,
+      timeOut: setOnloadEvent()
     };
 
     this.updateStatus = this.updateStatus.bind(this);
   }
 
   componentDidMount(){
-    console.log(`this.paorspor`, this.props)
+    const {timeOut} = this.state;
+   
+    if(timeOut){
+      setTimeout(() =>{
+        this.setState({loading: false})
+      },timeOut)
+    }
+    
+      
+    
   }
 
   updateStatus(statusText) {
@@ -127,18 +153,25 @@ class OrderStatusComponent extends Component {
 
   render() {
     const { cartItems } = this.props;
-    const { status } = this.state;
+    const { status, loading,timeOut } = this.state;
+    let loadTime = 
+
 
     // const orderList = cartItems.length ? cartItems : order_data; //[JSON.parse(localStorage.getItem("catalogueFormData"))];
-
+    console.log(`loading`, loading)
     return (
-      <div className="content order-status">
-        <div className="title-bc">
+      // <div className="content order-status">
+      <OrderStatusContainer>
+        {loading ? <LoadingBar time={timeOut}/>  :(
+        <Fragment>
+        <TitleContainer>
           <h1>Order and Status</h1>
-        </div>
-        
-        {cartItems ? <OrderStatusTable data={cartItems} updateStatus={this.updateStatus} /> : 'Loading...'}
-      </div>
+        </TitleContainer>
+        <OrderStatusTable data={cartItems} updateStatus={this.updateStatus} /> 
+        </Fragment>
+        )}
+        {/* {cartItems ? <OrderStatusTable data={cartItems} updateStatus={this.updateStatus} /> : 'Loading...'} */}
+      </OrderStatusContainer>
     );
   }
 }
@@ -242,14 +275,16 @@ export class OrderStatusInfoComponent extends Component {
 
     const { updateStatus } = this.props.data.otherProps.location;
 
-    console.log(`match `, this.props);
+    console.log(`match `, catalogueData);
     console.log(`secondaryMobile`, secondaryMobile);
 
     const userData = data && data.auth;
 
     return (
-      <div className="content order-status-info">
-        <div className="title-bc">
+      // <div className="content order-status-info">
+      <OrderStatusContainer>
+        {/* <div className="title-bc"> */}
+        <TitleContainer className="title">
           <h1>
             <Link
               to={addNewCatalogue ? "/service-catalogue" : "/order-status"}
@@ -261,28 +296,29 @@ export class OrderStatusInfoComponent extends Component {
               {addNewCatalogue ? "Catalogue Order Form" : "Orders and Status"}
             </span>
           </h1>
-        </div>
-        <div className="content-container">
-          <div className="row">
-            <div className="col-25">
+        </TitleContainer>
+        {/* <div className="content-container"> */}
+        <OrderStatusInfoWrapper>
+          {/* <div className="row"> */}
+          <OrderStatusInfoContainer>
+            {/* <div className="col-25"> */}
+            <InfoContainer>
               {/* <button className="btn btn-green" onClick={this.handleClick}>
                 {addNewCatalogue ? "ADD" : "APPROVE"}
               </button> */}
               <ConfirmDialog
-                className="btn btn-green"
                 handleClick={addNewCatalogue ? "catalogueFormData" : "Approve"}
                 data={this.state}
                 addOrder={addNewCatalogue ? true : false}
                 alert={alert}
                 message={"Add this order?"}
                 match={data.match}
-                buttonClass="btn-green"
+                buttonClass="btn-green button--green"
                 type={addNewCatalogue ? "Add" : "Activate"}
                 itemId={itemId}
                 updateStatus={updateStatus}
               />
               <ConfirmDialog
-                className="btn btn-orange"
                 handleClick={addNewCatalogue ? "catalogueFormData" : "Approve"}
                 data={this.state}
                 addOrder={addNewCatalogue ? true : false}  
@@ -290,7 +326,7 @@ export class OrderStatusInfoComponent extends Component {
                 message={"Cancel this order?"}
                 match={data.match}
                 type="Cancel"
-                buttonClass="btn-outline-orange"
+                buttonClass="btn-outline-orange btn--orange"
                 itemId={itemId}
                 updateStatus={updateStatus}
               />
@@ -301,9 +337,10 @@ export class OrderStatusInfoComponent extends Component {
                 <button className="btn btn-outline-orange" onClick={this.handleClick}>Cancel</button>
               </Link> */}
 
-              <div
+              {/* <div
                 className={`cat cat-${catalogueData ? catalogueData.logo : logo}`}
-              >
+              > */}
+              <CatalogueImageContainer className={`catalogue__image cat-${catalogueData ? catalogueData.logo : logo} catalogue__image`} >
                 <div className="cat-border"></div>
                 <div className="ico-cart">
                   <Bag className="i" />
@@ -334,17 +371,19 @@ export class OrderStatusInfoComponent extends Component {
                   </span>
                   <br />
                 </div>
-              </div>
-            </div>
+              </CatalogueImageContainer>
+            </InfoContainer>
             <div className="col-75">
-              <div className="info">
-                <div className="info-group">
+              {/* <div className="info"> */}
+              <InfoDetailsContainer className="info__container">
+                <div className="info-group info--label">
                   <p className="label">Service Information</p>
-                  <h3>{service}</h3>
+                    <h3>{catalogueData ? catalogueData.title : ""}</h3>
                 </div>
-                <div className="info-group">
+                <div className="info-group info--label2">
                   <p className="label">Service Information</p>
-                  <div className="row">
+                  {/* <div className="row"> */}
+                  <OrderStatusInfoContainer id="input__info__container">
                     <div className="col">
                       <Fragment>
                         {addNewCatalogue ? (
@@ -372,8 +411,8 @@ export class OrderStatusInfoComponent extends Component {
                           <strong> {last_name}</strong>
                         )}
                       </Fragment>
-                    </div>
-                    <div className="col">
+                    {/* </div> */}
+                    {/* <div className="col"> */}
                       <Fragment>
                         {addNewCatalogue ? (
                           <FormInput
@@ -426,6 +465,9 @@ export class OrderStatusInfoComponent extends Component {
                           cols="30"
                           placeholder="Address"
                           onChange={this.handleChange}
+                          style={{
+                            resize: "none"
+                          }}
                         />
                       ) : (
                         <p>{address}</p>
@@ -439,7 +481,7 @@ export class OrderStatusInfoComponent extends Component {
                         Australia
                       </p> */}
                     </div>
-                  </div>
+                    </OrderStatusInfoContainer>
                 </div>
                 <div className="info-group">
                   <p className="label">Approval Status</p>
@@ -457,11 +499,11 @@ export class OrderStatusInfoComponent extends Component {
                   <p className="label">Approval Status</p>
                   <span className="span-status">{status}</span>
                 </div>
-              </div>
+                </InfoDetailsContainer>
             </div>
-          </div>
-        </div>
-      </div>
+            </OrderStatusInfoContainer>
+          </OrderStatusInfoWrapper>
+        </OrderStatusContainer>
     );
   }
 }
@@ -479,13 +521,6 @@ function OrderStatusTable({ data, updateStatus }) {
 
   const columns = useMemo(
     () => [
-      /*{
-        Header: () => <input key={uniqid()} type="checkbox" />,
-        accessor: "service",
-        width: 30,
-        className: "select-all",
-        Cell: props => <input key={uniqid()} type="checkbox" />
-      },*/
       {
         Header: "",
         accessor: "logo",

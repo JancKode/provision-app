@@ -18,6 +18,7 @@ import {
   approveOrder
 } from "../../reducers/cart/cart.utils";
 import messages from "../../reducers/messages";
+import { Fragment } from "react";
 
 const AlertDialog = ({
   addItem,
@@ -96,7 +97,7 @@ const AlertDialog = ({
   };
 
   return (
-    <div>
+    <Fragment>
       <button
         className={`btn ${buttonClass}`}
         variant="outlined"
@@ -135,7 +136,7 @@ const AlertDialog = ({
           </button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Fragment>
   );
 };
 
