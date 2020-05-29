@@ -1,12 +1,12 @@
-import React from 'react';
+// import React from 'react';
 
 
-import {LoadingBarWrapper} from './loading-bar.styles'
-import './loading-bar.styles.scss';
+// import {LoadingBarWrapper} from './loading-bar.styles'
+// import './loading-bar.styles.scss';
 
-const LoadingBar = ({time}) => {
-    {console.log(`time`, time)}
-   return( <LoadingBarWrapper time={time}/>)
-}
+// const LoadingBar = ({time}) => {
+//     {console.log(`time`, time)}
+//    return( <LoadingBarWrapper time={time}/>)
+// }
 
-export default LoadingBar;
+// export default LoadingBar;

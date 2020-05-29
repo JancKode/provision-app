@@ -39,7 +39,8 @@ import {OrderStatusContainer,
 
 
 import './order-status-info.styles.scss'
-import LoadingBar from "../../loading-bar/loading-bar.component";
+// import LoadingBar from "../../loading-bar/loading-bar.component";
+import LinearBar from '../../linear-bar/linear-bar.component'
 
 import { setOnloadEvent } from '../../../utilities/helper'
 
@@ -62,6 +63,7 @@ function OrderStatusPageContainer({ auth, cartItems, alert, getOrderData }) {
   // console.log(otherProps.orderData(auth.uid))
 
   console.log(`cartcartItems`, cartItems.order_data);
+  
   if (cartItems && cartItems.length > 0) {
     cartItem = cartItems.map(item => {
       return {
@@ -143,7 +145,7 @@ class OrderStatusComponent extends Component {
     
       
     
-  }
+  }        
 
   updateStatus(statusText) {
     this.setState({
@@ -154,24 +156,23 @@ class OrderStatusComponent extends Component {
   render() {
     const { cartItems } = this.props;
     const { status, loading,timeOut } = this.state;
-    let loadTime = 
-
-
     // const orderList = cartItems.length ? cartItems : order_data; //[JSON.parse(localStorage.getItem("catalogueFormData"))];
-    console.log(`loading`, loading)
+    
     return (
-      // <div className="content order-status">
-      <OrderStatusContainer>
-        {loading ? <LoadingBar time={timeOut}/>  :(
+    
+      <Fragment>
+        { loading ? <LinearBar time={timeOut}/>:
+      (<OrderStatusContainer>
         <Fragment>
         <TitleContainer>
           <h1>Order and Status</h1>
         </TitleContainer>
-        <OrderStatusTable data={cartItems} updateStatus={this.updateStatus} /> 
+        <OrderStatusTable data={(cartItems && cartItems.length > 1) ? cartItems : []} updateStatus={this.updateStatus} /> 
         </Fragment>
-        )}
         {/* {cartItems ? <OrderStatusTable data={cartItems} updateStatus={this.updateStatus} /> : 'Loading...'} */}
-      </OrderStatusContainer>
+      </OrderStatusContainer>) 
+      }
+      </Fragment>
     );
   }
 }

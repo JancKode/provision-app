@@ -4,6 +4,9 @@ import uniqid from "uniqid";
 import CartActionTypes from "./cart.type";
 import returnErrors from "../messages";
 
+
+const appStageEnv = process.env.REACT_APP_STAGE
+
 export const orderData = userId => dispatch => {
   let res;
   const config = {
@@ -16,24 +19,50 @@ export const orderData = userId => dispatch => {
     userId: userId,
     updateSta: "getAllOrderData",
   });
-  try {
-    res = axios.post("/order-status", body, config).then(res => {
-      console.log(`post result`, res.data);
-      dispatch({
-        type: CartActionTypes.GET_ALL_ORDER,
-        payload: res.data
+
+
+  if(appStageEnv === 'dev'){
+    try {
+      res = axios.post("/order-status", body, config).then(res => {
+        console.log(`post result`, res.data);
+        dispatch({
+          type: CartActionTypes.GET_ALL_ORDER,
+          payload: res.data
+        });
+        // return res.data
       });
-      // return res.data
-    });
-    console.log(`userId inside order_data`, res.data);
-  } catch (error) {
-    dispatch(returnErrors(error.response.data, error.response.status));
-    dispatch({
-      type: CartActionTypes.CART_ERROR
-    });
-    console.log(`error in getting order Data`, error);
-    return error;
+      console.log(`userId inside order_data`, res.data);
+    } catch (error) {
+      dispatch(returnErrors(error.response.data, error.response.status));
+      dispatch({
+        type: CartActionTypes.CART_ERROR
+      });
+      console.log(`error in getting order Data`, error);
+      return error;
+    }
+
+  }else if(appStageEnv === 'mock'){
+    try {
+      res = axios.get("https://d05ea3e3-649a-4145-b292-c4ed31dc6ab6.mock.pstmn.io/order-status", body, config).then(res => {
+        console.log(`post result`, res.data);
+        dispatch({
+          type: CartActionTypes.GET_ALL_ORDER,
+          payload: res.data
+        });
+        // return res.data
+      });
+      console.log(`userId inside order_data`, res.data);
+    } catch (error) {
+      dispatch(returnErrors(error.response.data, error.response.status));
+      dispatch({
+        type: CartActionTypes.CART_ERROR
+      });
+      console.log(`error in getting order Data`, error);
+      return error;
+    }
   }
+
+  
 };
 
 export const getData = async data => {
@@ -48,11 +77,12 @@ export const getData = async data => {
     updateSta: "getData"
   });
   let res;
+
   try {
     res = await axios.post("/order-status-info", body, config);
     return res.data;
   } catch (error) {
-    console.log(`getData error`, error);
+    console.log(`getData error`, error.response);
     return error;
   }
 };

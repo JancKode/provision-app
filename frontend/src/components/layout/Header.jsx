@@ -35,12 +35,21 @@ export class Header extends Component {
   }
   render() {
     const { isAuthenticated, first_name, last_name } = this.props.auth;
-    console.log(`auth properties`, this.props.auth.first_name);
+    let initials;
+    console.log(`auth properties`, this.props.auth);
+
+    if(isAuthenticated){
+      initials = `${first_name.charAt(0)}${last_name.charAt(0)}`;
+    } else {
+      initials = process.env.REACT_APP_STAGE === "mock" ? "TU" : "";
+    }
+    
+    
 
     const authLinks = (
       <Link
         to="/login"
-        className="link"
+        className="link link-logout"
         // className="nav-link"
         onClick={() => {
           this.handleClick();
@@ -60,7 +69,7 @@ export class Header extends Component {
           </Link>
         </div>
         <ProfileArea>
-          <ProfileInfo>
+          <ProfileInfo className="profile-info">
             <ProfileName className="profile-name">{`${first_name} ${last_name}`}</ProfileName>
             {isAuthenticated ? (
               <span className="profile-status">{"Admin"}</span>
@@ -69,10 +78,11 @@ export class Header extends Component {
             )}
             <br />
             {isAuthenticated ? authLinks : ""}
-          </ProfileInfo>
-          {isAuthenticated ? <ProfileWrapper>
-            <InitialsWrapper>{first_name.charAt(0)}{last_name.charAt(0)}</InitialsWrapper>
+            {isAuthenticated ? <ProfileWrapper>
+            <InitialsWrapper>{initials}</InitialsWrapper>
           </ProfileWrapper> : ""}
+          </ProfileInfo>
+         
         </ProfileArea>
       </NavBar>
     );

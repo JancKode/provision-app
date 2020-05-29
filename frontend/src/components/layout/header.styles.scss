@@ -8,7 +8,20 @@
     }
 }
 
-.logout {
+.link-logout {
+    position: relative;
+    right: 3rem;
+    
+}
+.logout{
     display: none;
+}
+
+.profile-info {
+    span {
+    position: relative;
+    right: 3rem;
+
+    }
     
 }

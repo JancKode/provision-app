@@ -35,16 +35,19 @@ export const ProfileArea = styled.div`
 
 export const ProfileInfo = styled.div`
     text-align: right;
+    position: relative;
 
 `
 
 export const ProfileName = styled.span`
     font-weight: bold;
     margin-right: 0.5rem;
+    position: relative;
+    right: 3rem;
 `
 
 export const ProfileWrapper = styled.div`
-    position: relative;
+    position: absolute;
     top: 1rem;
     right: -.5rem;
     transform: translateY(-50%);
@@ -53,6 +56,7 @@ export const ProfileWrapper = styled.div`
     background: #1f54b6;
     border-radius: 50%;   
     vertical-align: middle;
+    text-align: center;
 `
 
 export const InitialsWrapper = styled.p`
@@ -63,6 +67,6 @@ export const InitialsWrapper = styled.p`
     position: relative;
     text-align: center;
     top: .9rem;
-    left: .7rem;
+    
   
 `

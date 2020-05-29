@@ -27,32 +27,35 @@ import {
   CardInfoRight,
 } from "./cards.styles";
 
-import LoadingBar from "../loading-bar/loading-bar.component";
+// import LoadingBar from "../loading-bar/loading-bar.component";
+
+import LinearBar from '../linear-bar/linear-bar.component';
 
 import "./cards.styles.scss";
+import { Fragment } from "react";
 
 const Cards = ({ getCatalogueData, data }) => {
   let loadTime = setOnloadEvent();
   const { catalogue } = data.catalogue;
   let cardItems = [];
-  console.log(`loadTime loadTime`, loadTime)
+  
   const [loading, setLoadState] = useState(true);
   const [status, setPageStatus] = useState(201);
-
+  const [setTime, setTimeState] = useState();
+  
   useEffect(() => {
     getCatalogueData();
   }, []);
 
   const setTimeoutState = (time) => {
-    console.log(time);
     if (time > 1) {
       setTimeout(() => {
         setPageStatus(catalogue.status);
         setLoadState(false);
       }, time);
     }
-  };
-
+  };  
+  console.log(`status`, status)
   if (status === 200) {
     cardItems = catalogue.data.map((item) => (
       // <div key={item.uid} className="col col-25">
@@ -135,16 +138,32 @@ const Cards = ({ getCatalogueData, data }) => {
 
   return (
     // <div className="content">
-    <div>
-      {!loading ? (
+    <CardContainer style={{width: "100%"}}>
+      {status !== 200 ?  <LinearBar time={loadTime}/> : (
+        <Fragment>
+        {/* <div className="title-bc"> */}
+        <TitleContainer>
+          <h1>Service Catalogue</h1>
+        </TitleContainer>
+        {/* <div className="content-container"> */}
+        <ContentContainer>
+          {/* <div className="row"> */}
+          <CardRowContainer>
+            {cardItems}
+            {true ? "" : addNewCatalogue}
+          </CardRowContainer>
+        </ContentContainer>
+        </Fragment>
+      )}
+      { /*!loading ? (
         <CardContainer>
-          {/* <div className="title-bc"> */}
+          
           <TitleContainer>
             <h1>Service Catalogue</h1>
           </TitleContainer>
-          {/* <div className="content-container"> */}
+          
           <ContentContainer>
-            {/* <div className="row"> */}
+            
             <CardRowContainer>
               {cardItems}
               {true ? "" : addNewCatalogue}
@@ -152,10 +171,11 @@ const Cards = ({ getCatalogueData, data }) => {
           </ContentContainer>
         </CardContainer>
       ) : (
-        <LoadingBar time={loadTime} />
-      )}
+        <LinearBar time={loadTime}/>
+      )
+      */}
       {setTimeoutState(loadTime)}
-    </div>
+    </CardContainer>
   );
 };
 

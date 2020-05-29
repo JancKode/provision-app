@@ -26,7 +26,8 @@ export const TitleContainer = styled.div`
 `;
 
 export const ContentContainer = styled.div`
-    height: 100vh;
+    height: 100%;
+    width:100%
 `
 
 
@@ -39,7 +40,8 @@ export const CardRowContainer = styled.div`
         margin-left: -0.5rem;
         margin-right: -0.5rem;
         padding: 1rem;
-        width: 100%
+        width: 100%;
+        
         background-color: #f6f7f8;
         justify-content: center;
         
@@ -55,7 +57,7 @@ export const SingleCardContaier = styled.div`
 export const Card = styled.div`
     position: relative;
     width: 100%;
-    height: 80vh;
+    height: 45vh;
     background: white;
     box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.09);
     border-radius: 6px;

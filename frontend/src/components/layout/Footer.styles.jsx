@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 
 export const FooterWrapper = styled.div`
-    position: absolute;
+    position: fixed;
     z-index: 1;
-    heigth: 4rem;
-    bottom: 2;
+    height: 3rem;
+    bottom: 0;
     width: 100%
+    background-color: white;
     
     & ul {
         text-align: center;

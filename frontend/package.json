@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^4.6.1",
+    "@material-ui/core": "^4.9.14",
     "@material-ui/icons": "^4.5.1",
     "axios": "^0.19.0",
+    "dotenv": "^8.2.0",
+    "env-cmd": "^10.1.0",
     "jwt-decode": "^2.2.0",
     "node-sass": "^4.13.0",
     "prop-types": "^15.7.2",
@@ -28,6 +30,8 @@
     "uniqid": "^5.2.0"
   },
   "scripts": {
+    "start-dev": "env-cmd -e dev react-scripts start",
+    "start-mock": "env-cmd -e mock-data react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
